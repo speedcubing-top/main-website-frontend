@@ -1,3 +1,3 @@
 main-website-frontend
 ===========
-http://speedcubing.top/
+https://speedcubing.top/
