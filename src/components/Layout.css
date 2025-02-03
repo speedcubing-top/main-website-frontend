@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+.layoutdiv {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.loginbutton {
+  position: absolute;
+  right: -10px;
+}
+
+header {
+  position: sticky;
+  z-index: 10;
+  
+  height: 20px;
+  padding: 10px;
+  
+  background: #000000;
+  color: white;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  
+  cursor: default;
+  user-select: none;
+}
+
+header span {
+  cursor: pointer;
+}
+
+header a {
+  text-decoration: none;
+  color: white;
+  margin-right: 25px;
+}
+
+header span {
+  width: fit-content;
+}
+
+main {
+  flex: 1;
+  
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+footer {
+  height: 20px;
+  padding: 10px;
+
+  background: #000000;
+  color: white;
+  font-family: 'JetBrains Mono', monospace;
+  text-align: center;
+}

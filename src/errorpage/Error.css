@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+.errorpagediv {
+  flex: 1;
+  background: #101010;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.errorpagediv h1 {
+  color: white;
+}

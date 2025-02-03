@@ -1,0 +1,12 @@
+.markdown-body {
+  width: 60%;
+  margin: auto;
+  background-color: #101010;
+  padding-top: 50px;
+  padding-bottom: 100px;
+}
+
+.markdowndiv {
+  flex: 1;
+  background: #101010;
+}
