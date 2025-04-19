@@ -1,7 +1,13 @@
 import React from 'react';
-import './MainPage.css';
+import { renderMarkdown } from '../utils/markdownUtils'
+import './Markdown.css'
+//import './MainPage.css';
 
 const MainPage = () => {
+  const md = `
+dwa
+dwadwa
+`;
     return (
       <div className="mainpagediv">
         <br/>
