@@ -27,7 +27,7 @@ export function renderMarkdown(markdown) {
     )
 }
 
-export function RenderFile({file}) {
+export function RenderFile(file) {
   const [found, setFound] = useState(true);
   const [markdown, setMarkdown] = useState('');
 
@@ -39,7 +39,7 @@ export function RenderFile({file}) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({file})
+        body: JSON.stringify({'file': file})
       })
 
       const json = await res.json()
