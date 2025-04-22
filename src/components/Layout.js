@@ -64,7 +64,7 @@ const Layout = ({ children }) => {
             return "/login?return_to=" + encodeURIComponent(window.location.href);
           }
         })()}>
-          {loggedIn ? Logout (${name}) : 'Login'}
+          {loggedIn ? `Logout (${name})` : 'Login'}
         </Link>
 
       </header>
