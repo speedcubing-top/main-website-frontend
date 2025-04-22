@@ -36,26 +36,26 @@ const Layout = ({ children }) => {
       <header>
         <span>
           <img src="/assets/icons/house-solid.svg" alt="" width="15" />
-          <a href="/">Home</a>
+          <Link to="/">Home</Link>
         </span>
         <span>
           <img src="/assets/icons/cube-solid.svg" alt="" width="15" />
-          <a href="/algs">Algorithms</a>
+          <Link to="/algs">Algorithms</Link>
         </span>
         <span>
           <img src="/assets/icons/github.svg" alt="" width="15" />
-          <a href="/github" target="_blank">
+          <a href="/github" target="_blank" rel="noopener noreferrer">
             GitHub
           </a>
         </span>
         <span>
           <img src="/assets/icons/discord.svg" alt="" width="15" />
-          <a href="/discord" target="_blank">
+          <a href="/discord" target="_blank" rel="noopener noreferrer">
             Discord
           </a>
         </span>
 
-        <a className='loginbutton' href={(() => {
+        <Link className='loginbutton' to={(() => {
           if (loggedIn) {
             return "/logout";
           } else if(location.pathname === "/") {
@@ -63,14 +63,14 @@ const Layout = ({ children }) => {
           } else {
             return "/login?return_to=" + encodeURIComponent(window.location.href);
           }
-        })()}> 
-          {loggedIn ? `Logout (${name})` : 'Login'}
-        </a>
+        })()}>
+          {loggedIn ? Logout (${name}) : 'Login'}
+        </Link>
 
       </header>
       <main>{loading ? <Loading /> : children}</main>
       <footer>
-        <span>© 2024 speedcubing.top</span>
+        <span>© 2025 speedcubing.top</span>
       </footer>
     </div>
   );
