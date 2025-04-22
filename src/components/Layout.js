@@ -55,17 +55,22 @@ const Layout = ({ children }) => {
           </a>
         </span>
 
-        <Link className='loginbutton' to={(() => {
-          if (loggedIn) {
-            return "/logout";
-          } else if(location.pathname === "/") {
-            return "/login";
-          } else {
-            return "/login?return_to=" + encodeURIComponent(window.location.href);
-          }
-        })()}>
-          {loggedIn ? `Logout (${name})` : 'Login'}
-        </Link>
+{loggedIn ? (
+  <a className='loginbutton' href="/logout">
+    Logout ({name})
+  </a>
+) : (
+  <Link
+    className='loginbutton'
+    to={
+      location.pathname === "/"
+        ? "/login"
+        : "/login?return_to=" + encodeURIComponent(window.location.href)
+    }
+  >
+    Login
+  </Link>
+)}
 
       </header>
       <main>{loading ? <Loading /> : children}</main>
