@@ -51,7 +51,7 @@ export function RenderFile(file) {
 
     const intervalId = setInterval(run, 5000);
     return () => clearInterval(intervalId); 
-  }, []);
+  });
 
   if(!found) {
     return <Error404 />;
