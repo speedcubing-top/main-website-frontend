@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Loading from './Loading';
 import './Layout.css';
 
@@ -36,41 +36,46 @@ const Layout = ({ children }) => {
       <header>
         <span>
           <img src="/assets/icons/house-solid.svg" alt="" width="15" />
-          <a href="/">Home</a>
+          <Link to="/">Home</Link>
         </span>
         <span>
           <img src="/assets/icons/cube-solid.svg" alt="" width="15" />
-          <a href="/algs">Algorithms</a>
+          <Link to="/algs">Algorithms</Link>
         </span>
         <span>
           <img src="/assets/icons/github.svg" alt="" width="15" />
-          <a href="/github" target="_blank">
+          <a href="/github" target="_blank" rel="noopener noreferrer">
             GitHub
           </a>
         </span>
         <span>
           <img src="/assets/icons/discord.svg" alt="" width="15" />
-          <a href="/discord" target="_blank">
+          <a href="/discord" target="_blank" rel="noopener noreferrer">
             Discord
           </a>
         </span>
 
-        <a className='loginbutton' href={(() => {
-          if (loggedIn) {
-            return "/logout";
-          } else if(location.pathname === "/") {
-            return "/login";
-          } else {
-            return "/login?return_to=" + encodeURIComponent(window.location.href);
-          }
-        })()}> 
-          {loggedIn ? `Logout (${name})` : 'Login'}
-        </a>
+{loggedIn ? (
+  <a className='loginbutton' href="/logout">
+    Logout ({name})
+  </a>
+) : (
+  <Link
+    className='loginbutton'
+    to={
+      location.pathname === "/"
+        ? "/login"
+        : "/login?return_to=" + encodeURIComponent(window.location.href)
+    }
+  >
+    Login
+  </Link>
+)}
 
       </header>
       <main>{loading ? <Loading /> : children}</main>
       <footer>
-        <span>© 2024 speedcubing.top</span>
+        <span>© 2025 speedcubing.top</span>
       </footer>
     </div>
   );
