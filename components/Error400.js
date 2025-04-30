@@ -1,9 +1,9 @@
 import React from "react";
-import './Error.module.css';
+import styles from './Error.module.css';
 
 const Error400 = () => {
   return (
-    <div className="errorpagediv">
+    <div className={styles.errorpagediv}>
       <h1>400 Bad Request</h1>
     </div>
   );
