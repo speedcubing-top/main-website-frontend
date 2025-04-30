@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { useSearchParams } from 'next/navigation'
-import './Login.module.css';
+import styles from './Login.module.css';
 
 const Login = () => {
 
@@ -26,7 +26,7 @@ const Login = () => {
   }
 
   return (
-    <div className="logindiv">
+    <div className={styles.logindiv}>
       <table align="center" width="200" border="0">
         <tbody>
           <tr>
