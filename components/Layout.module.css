@@ -1,0 +1,12 @@
+/* components/Layout.module.css */
+
+.span {
+  cursor: pointer;
+  width: fit-content;
+}
+
+.a {
+  text-decoration: none;
+  color: white;
+  margin-right: 25px;
+}
