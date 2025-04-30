@@ -39,8 +39,8 @@ const Layout = ({ children }) => {
   }, [router.pathname]);
 
   return (
-    <div className='layoutdiv'>
-      <header>
+    <div className={styles.layoutdiv}>
+      <header className={styles.header}>
         <span>
           <img src="/assets/icons/house-solid.svg" alt="" width="15" />
           <Link href="/">Home</Link>
@@ -71,8 +71,8 @@ const Layout = ({ children }) => {
 )}
 
       </header>
-      <main>{loading ? <Loading /> : children}</main>
-      <footer>
+      <main className={styles.main}>{loading ? <Loading /> : children}</main>
+      <footer className={styles.footer}>
         <span>© 2025 speedcubing.top</span>
       </footer>
     </div>
