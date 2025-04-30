@@ -11,7 +11,7 @@
   right: -10px;
 }
 
-header {
+.header {
   position: sticky;
   z-index: 10;
   
@@ -27,21 +27,21 @@ header {
   user-select: none;
 }
 
-header span {
+.header span {
   cursor: pointer;
 }
 
-header a {
+.header a {
   text-decoration: none;
   color: white;
   margin-right: 25px;
 }
 
-header span {
+.header span {
   width: fit-content;
 }
 
-main {
+.main {
   flex: 1;
   
   display: flex;
@@ -49,7 +49,7 @@ main {
   height: 100vh;
 }
 
-footer {
+.footer {
   height: 20px;
   padding: 10px;
 

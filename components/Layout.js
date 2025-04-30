@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 import Loading from './Loading';
-import './Layout.css';
+import styles from './Layout.module.css';
 
 const Layout = ({ children }) => {
-  const location = useLocation();
+  const router = useRouter();
   const [name, setName] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loginUrl, setLoginUrl] = useState('/login');
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -31,16 +33,21 @@ const Layout = ({ children }) => {
     checkLogin();
   }, []);
 
+  useEffect(() => {
+    const returnTo = router.pathname === "/" ? "/login" : `/login?return_to=${encodeURIComponent(window.location.href)}`;
+    setLoginUrl(returnTo);
+  }, [router.pathname]);
+
   return (
     <div className='layoutdiv'>
       <header>
         <span>
           <img src="/assets/icons/house-solid.svg" alt="" width="15" />
-          <Link to="/">Home</Link>
+          <Link href="/">Home</Link>
         </span>
         <span>
           <img src="/assets/icons/cube-solid.svg" alt="" width="15" />
-          <Link to="/algs">Algorithms</Link>
+          <Link href="/algs">Algorithms</Link>
         </span>
         <span>
           <img src="/assets/icons/github.svg" alt="" width="15" />
@@ -56,20 +63,11 @@ const Layout = ({ children }) => {
         </span>
 
 {loggedIn ? (
-  <a className='loginbutton' href="/logout">
+  <a className={styles.loginbutton} href="/logout">
     Logout ({name})
   </a>
 ) : (
-  <Link
-    className='loginbutton'
-    to={
-      location.pathname === "/"
-        ? "/login"
-        : "/login?return_to=" + encodeURIComponent(window.location.href)
-    }
-  >
-    Login
-  </Link>
+  <Link className={styles.loginbutton} href={loginUrl}>Login</Link>
 )}
 
       </header>

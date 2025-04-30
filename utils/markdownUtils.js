@@ -4,8 +4,8 @@ import rehypeRaw from 'rehype-raw'
 import rehypeSanitize from 'rehype-sanitize'
 import remarkGfm from 'remark-gfm'
 import React, { useEffect, useState } from 'react'
-import Error404 from '../errorpage/Error404'
-import './markdown.css';
+import Error404 from '../components/Error404'
+import './markdown.module.css';
 
 function LinkRenderer(props) {
   return (
