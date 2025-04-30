@@ -6,7 +6,6 @@ import remarkGfm from 'remark-gfm'
 import React, { useEffect, useState } from 'react'
 import Error404 from '../components/Error404'
 import './markdown.module.css';
-import styles from './markdown.module.css';
 
 function LinkRenderer(props) {
   return (
@@ -59,8 +58,8 @@ export function RenderFile(file) {
   }
 
   return (
-    <div className={styles.markdowndiv}>
-      <div className={styles.markdownbody}>
+    <div className="markdowndiv">
+      <div className="markdownbody">
         {
           renderMarkdown(markdown)
         }
