@@ -5,6 +5,7 @@ import rehypeSanitize from 'rehype-sanitize'
 import remarkGfm from 'remark-gfm'
 import React, { useEffect, useState } from 'react'
 import Error404 from '../components/Error404'
+import './markdown.module.css';
 import styles from './markdown.module.css';
 
 function LinkRenderer(props) {
