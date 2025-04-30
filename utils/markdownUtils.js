@@ -61,12 +61,10 @@ export function RenderFile(file) {
 
   return (
     <div className={styles.markdowndiv}>
-      <div className={styles.markdowncenter}>
-        <div className='markdown-body'>
-          {
-            renderMarkdown(markdown)
-          }
-        </div>
+      <div className={`markdown-body ${styles.markdowncenter}`}>
+        {
+          renderMarkdown(markdown)
+        }
       </div>
     </div>
   );
