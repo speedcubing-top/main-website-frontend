@@ -1,7 +1,7 @@
 import Layout from '../components/Layout';
 import Login from '../components/Login';
 
-function Login() {
+function LoginPage() {
   return (
     <Layout>
       <Login />
@@ -9,4 +9,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default LoginPage;
