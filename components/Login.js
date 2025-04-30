@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'next/navigation'
 import './Login.module.css';
 
 const Login = () => {
 
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams()
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e) => {
