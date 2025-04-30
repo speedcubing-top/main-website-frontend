@@ -5,7 +5,10 @@ import rehypeSanitize from 'rehype-sanitize'
 import remarkGfm from 'remark-gfm'
 import React, { useEffect, useState } from 'react'
 import Error404 from '../components/Error404'
-import './markdown.css';
+
+import 'github-markdown-css/github-markdown-dark.css';
+import 'highlight.js/styles/github-dark.css';
+import styles from './markdown.module.css';
 
 function LinkRenderer(props) {
   return (
@@ -17,7 +20,7 @@ function LinkRenderer(props) {
 
 export function renderMarkdown(markdown) {
     return (
-        <Markdown 
+        <Markdown
           components={{a: LinkRenderer}}
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeRaw, rehypeSanitize, rehypeHighlight]}
@@ -33,7 +36,6 @@ export function RenderFile(file) {
 
   useEffect(() => {
     const run = async () => {
-      
       const res = await fetch('https://speedcubing.top/api/notes', {
         method: 'POST',
         headers: {
@@ -44,13 +46,13 @@ export function RenderFile(file) {
 
       const json = await res.json()
       if(json["success"]) {
-        setMarkdown(json["content"])  
+        setMarkdown(json["content"])
       } else setFound(false)
     }
     run()
 
     const intervalId = setInterval(run, 5000);
-    return () => clearInterval(intervalId); 
+    return () => clearInterval(intervalId);
   });
 
   if(!found) {
@@ -58,11 +60,13 @@ export function RenderFile(file) {
   }
 
   return (
-    <div className="markdowndiv">
-      <div className="markdownbody">
-        {
-          renderMarkdown(markdown)
-        }
+    <div className={styles.markdowndiv}>
+      <div className={styles.markdowncenter}>
+        <div className='markdown-body'>
+          {
+            renderMarkdown(markdown)
+          }
+        </div>
       </div>
     </div>
   );

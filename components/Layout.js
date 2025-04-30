@@ -28,7 +28,7 @@ const Layout = ({ children }) => {
         setLoggedIn(true);
       }
       setLoading(false);
-    };
+   };
 
     checkLogin();
   }, []);
