@@ -8,7 +8,8 @@ github-markdown-dark.css
 @import 'github-markdown-css/github-markdown-dark.css';
 
 .markdown-body {
-    width: 60%;
+    width: 100%;
+    max-width: 720px;
     margin: auto;
     background-color: #101010;
     padding-top: 50px;
