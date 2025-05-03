@@ -58,7 +58,7 @@ export function RenderFile(file) {
   }
 
   return (
-    <div className="markdowndiv">
+    <div className="flex-[1] bg-[#101010]">
       <div className="markdown-body">
         {
           renderMarkdown(markdown)
