@@ -32,8 +32,8 @@ const Layout = ({ children }) => {
   }, []);
 
   return (
-    <div className='layoutdiv'>
-      <header>
+    <div className="flex flex-col min-h-[100dvh]">
+      <header className="sticky z-10 h-[40px] p-[10px] bg-[#000000] text-[white] text-center font-['JetBrains_Mono',_monospace] cursor-default select-none">
         <span>
           <img src="/assets/icons/house-solid.svg" alt="" width="15" />
           <Link to="/">Home</Link>
@@ -56,12 +56,12 @@ const Layout = ({ children }) => {
         </span>
 
 {loggedIn ? (
-  <a className='loginbutton' href="/logout">
+  <a className='absolute -right-[10px]' href="/logout">
     Logout ({name})
   </a>
 ) : (
   <Link
-    className='loginbutton'
+    className='absolute -right-[10px]'
     to={
       location.pathname === "/"
         ? "/login"
@@ -73,8 +73,8 @@ const Layout = ({ children }) => {
 )}
 
       </header>
-      <main>{loading ? <Loading /> : children}</main>
-      <footer>
+      <main className="flex-[1] flex flex-col h-screen">{loading ? <Loading /> : children}</main>
+      <footer className="h-[20px] p-[10px] bg-[#000000] text-[white] font-['JetBrains_Mono',_monospace] text-center">
         <span>© 2025 speedcubing.top</span>
       </footer>
     </div>

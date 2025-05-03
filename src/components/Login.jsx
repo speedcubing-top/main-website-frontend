@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import { useSearchParams } from 'react-router-dom';
-import './Login.css';
 
 const Login = () => {
 
@@ -26,16 +25,16 @@ const Login = () => {
   }
 
   return (
-    <div className="logindiv">
+    <div className="flex-[1] bg-[#101010]">
       <table align="center" width="200" border="0">
         <tbody>
           <tr>
             <td>
-              {errorMessage && <p>{errorMessage}</p>}
+              {errorMessage && <p className="font-['JetBrains_Mono',_monospace] text-[white]">{errorMessage}</p>}
               <form onSubmit={handleSubmit} id="myform">
-                <label htmlFor="username">Username:</label>
+                <label className="font-['JetBrains_Mono',_monospace] text-[white]" htmlFor="username">Username:</label>
                 <input type="text" id="username" name="username" /><br />
-                <label htmlFor="password">Password:</label>
+                <label className="font-['JetBrains_Mono',_monospace] text-[white]" htmlFor="password">Password:</label>
                 <input type="password" id="password" name="password" /><br />
                 <input type="submit" value="Login" />
               </form>

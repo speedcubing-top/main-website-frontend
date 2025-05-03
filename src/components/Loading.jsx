@@ -1,10 +1,9 @@
 import React from "react";
-import './Loading.css';
 
 const Loading = () => {
     return (
-      <div className="loadingdiv">
-        <h1>Loading... please wait</h1>
+      <div className="flex-[1] bg-[#101010] text-center font-['JetBrains_Mono',_monospace]">
+        <h1 className="text-[white]">Loading... please wait</h1>
       </div>
     );
 }
