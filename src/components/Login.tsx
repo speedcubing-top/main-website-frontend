@@ -1,17 +1,16 @@
-import React, {useState} from 'react';
+import React, { useState, FormEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-const Login = () => {
-
+const Login: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const res = await fetch("https://speedcubing.top/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(Object.fromEntries(new FormData(e.target).entries())),
+      body: JSON.stringify(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries())),
       credentials: "include", // 確保 cookie 被存儲
     });
 

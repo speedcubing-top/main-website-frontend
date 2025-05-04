@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Loading from './Loading';
 import './Layout.css';
 
-const Layout = ({ children }) => {
+interface LayoutProps {
+  children: ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
-  const [name, setName] = useState('');
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [name, setName] = useState<string>('');
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -55,25 +59,26 @@ const Layout = ({ children }) => {
           </a>
         </span>
 
-{loggedIn ? (
-  <a className='absolute -right-[10px]' href="/logout">
-    Logout ({name})
-  </a>
-) : (
-  <Link
-    className='absolute -right-[10px]'
-    to={
-      location.pathname === "/"
-        ? "/login"
-        : "/login?return_to=" + encodeURIComponent(window.location.href)
-    }
-  >
-    Login
-  </Link>
-)}
-
+        {loggedIn ? (
+          <a className="absolute -right-[10px]" href="/logout">
+            Logout ({name})
+          </a>
+        ) : (
+          <Link
+            className="absolute -right-[10px]"
+            to={
+              location.pathname === "/"
+                ? "/login"
+                : "/login?return_to=" + encodeURIComponent(window.location.href)
+            }
+          >
+            Login
+          </Link>
+        )}
       </header>
+
       <main className="flex-[1] flex flex-col h-screen">{loading ? <Loading /> : children}</main>
+
       <footer className="h-[20px] p-[10px] bg-[#000000] text-[white] font-['JetBrains_Mono',_monospace] text-center">
         <span>© 2025 speedcubing.top</span>
       </footer>
