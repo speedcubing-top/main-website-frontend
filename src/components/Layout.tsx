@@ -1,6 +1,7 @@
 import React, { useState, useEffect, ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Loading from './Loading';
+import MuzakPlayer from "./MuzakPlayer";
 import './Layout.css';
 
 interface LayoutProps {
@@ -8,6 +9,7 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+
   const location = useLocation();
   const [name, setName] = useState<string>('');
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
@@ -38,6 +40,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="flex flex-col min-h-[100dvh]">
       <header className="sticky z-10 top-[0] h-[20px] p-[10px] bg-[#000000] text-[white] text-center font-['JetBrains_Mono',_monospace] cursor-default select-none">
+        <div className="absolute -left-[-10px]">
+          <MuzakPlayer />
+        </div>
+
         <span>
           <img src="/assets/icons/house-solid.svg" alt="" width="15" />
           <Link to="/">Home</Link>
