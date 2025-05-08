@@ -50,7 +50,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </span>
         <span>
           <img src="/assets/icons/cube-solid.svg" alt="" width="15" />
-          <Link to="/algs">Notes</Link>
+          <Link to="/notes">Notes</Link>
         </span>
         <span>
           <img src="/assets/icons/github.svg" alt="" width="15" />
