@@ -9,9 +9,9 @@ export default function MainPage({ content }: MainPageProps) {
   return <Notes content={content} />;
 }
 
-export async function getStaticProps(context: any) {
+export async function getServerSideProps(context: any) {
 
-  const res = await fetch('http://127.0.0.1:83/api/notes', {
+  const res = await fetch('http://main-website-backend:8080/api/notes', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
