@@ -6,7 +6,6 @@ interface NotesProps {
 }
 
 const Notes: React.FC<NotesProps> = ({ content }: NotesProps) => {
-	console.log(content + "WHAT")
   return (
     <div className="flex-1 bg-[#101010]">
       {renderMarkdown(content)}
