@@ -1,5 +1,6 @@
 import React from 'react';
 import Notes from '../components/Notes';
+import { getNoteServerSideProps } from '../utils/NoteServerSideProps';
 
 interface NotesPageProps {
   content: string;
@@ -9,25 +10,6 @@ export default function NotesPage({ content }: NotesPageProps) {
   return <Notes content={content} />;
 }
 
-export async function getStaticProps(context: any) {
-
-  const res = await fetch('http://127.0.0.1:8080/api/notes', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ file: '' }),
-  });
-
-  const json = await res.json();
-
-  if (!json.success) {
-    return { notFound: true };
-  }
-
-  return {
-    props: {
-      content: json.content,
-    },
-  };
+export async function getServerSideProps(context: any) {
+  return getNoteServerSideProps('');
 }
