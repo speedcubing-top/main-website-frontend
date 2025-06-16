@@ -2,12 +2,13 @@ import React from 'react';
 import Notes from '../components/Notes';
 import { getNoteServerSideProps } from '../utils/NoteServerSideProps';
 
-interface MainPageProps {
+interface NotesPageProps {
   content: string;
+  filePath: string;
 }
 
-export default function MainPage({ content }: MainPageProps) {
-  return <Notes content={content} />;
+export default function NotesPage({ content, filePath }: NotesPageProps) {
+  return <Notes content={content} filePath={filePath} />;
 }
 
 export async function getServerSideProps(context: any) {

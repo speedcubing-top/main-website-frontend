@@ -1,10 +1,10 @@
-export async function getNoteServerSideProps(file: string) {
+export async function getNoteServerSideProps(filePath: string) {
   const res = await fetch('http://main-website-backend:8080/api/notes', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ file }),
+    body: JSON.stringify({ filePath }),
   });
 
   const json = await res.json();
@@ -16,6 +16,7 @@ export async function getNoteServerSideProps(file: string) {
   return {
     props: {
       content: json.content,
+	  filePath
     },
   };
 }
