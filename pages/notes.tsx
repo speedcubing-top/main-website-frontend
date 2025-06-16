@@ -4,11 +4,11 @@ import { getNoteServerSideProps } from '../utils/NoteServerSideProps';
 
 interface NotesPageProps {
   content: string;
-  filePath: string;
+  file: string;
 }
 
-export default function NotesPage({ content, filePath }: NotesPageProps) {
-  return <Notes content={content} filePath={filePath} />;
+export default function NotesPage({ content, file }: NotesPageProps) {
+  return <Notes content={content} file={file} />;
 }
 
 export async function getServerSideProps(context: any) {

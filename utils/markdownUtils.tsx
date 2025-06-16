@@ -12,10 +12,10 @@ import styles from './markdown.module.css';
 
 interface RenderMarkdownProps {
   content: string;
-  filePath: string;
+  file: string;
 }
 
-export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, filePath }) => {
+export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file }) => {
   const [markdown, setMarkdown] = useState<string>(content);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, filePat
         const res = await fetch('https://speedcubing.top/api/notes', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ filePath }),
+          body: JSON.stringify({ file }),
         });
 
         const json = await res.json();
@@ -39,7 +39,7 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, filePat
     fetchMarkdown();
     const intervalId = setInterval(fetchMarkdown, 5000);
     return () => clearInterval(intervalId);
-  }, [filePath, markdown]);
+  }, [file, markdown]);
 
   return (
     <div className={`markdown-body ${styles.wrapper}`}>
