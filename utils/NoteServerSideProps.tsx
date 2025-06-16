@@ -16,6 +16,7 @@ export async function getNoteServerSideProps(file: string) {
   return {
     props: {
       content: json.content,
+	  file
     },
   };
 }

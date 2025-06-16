@@ -1,16 +1,18 @@
 import React from 'react';
-import { renderMarkdown } from '../utils/markdownUtils';
+import { RenderMarkdown } from '../utils/markdownUtils';
 
 interface NotesProps {
   content: string;
+  file: string;
 }
 
-const Notes: React.FC<NotesProps> = ({ content }: NotesProps) => {
+const Notes: React.FC<NotesProps> = ({ content, file }) => {
   return (
     <div className="flex-1 bg-[#101010]">
-      {renderMarkdown(content)}
+      <RenderMarkdown content={content} file={file} />
     </div>
   );
 };
+
 
 export default Notes;
