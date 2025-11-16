@@ -1,3 +1,5 @@
+import matter from 'gray-matter';
+
 export async function getNoteServerSideProps(file: string) {
   const res = await fetch('http://main-website-backend:8080/api/notes', {
     method: 'POST',
@@ -13,10 +15,15 @@ export async function getNoteServerSideProps(file: string) {
     return { notFound: true };
   }
 
+  const { data, content } = matter(json.content);
+
+  let title = data?.title || 'speedcubing.top Website';
+
   return {
     props: {
-      content: json.content,
-	  file
+      content,
+	  file,
+	  title,
     },
   };
 }

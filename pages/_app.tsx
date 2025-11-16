@@ -27,9 +27,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         {/* Viewport */}
         <meta name="viewport" content="width=1024" />
 
-        {/* Title */}
-        <title>speedcubing.top</title>
-
         {/* Icon */}
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
