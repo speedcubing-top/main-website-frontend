@@ -26,7 +26,7 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
   useEffect(() => {
     const fetchMarkdown = async () => {
       try {
-        const res = await fetch(`https://speedcubing.top${getNoteApiPath(file)}`);
+        const res = await fetch(getNoteApiPath(file));
         if (!res.ok) {
           return;
         }

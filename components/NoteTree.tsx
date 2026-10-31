@@ -1,0 +1,119 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { NoteNode, encodeNotePath } from '../utils/NoteServerSideProps';
+
+interface NoteTreeProps {
+  nodes: NoteNode[];
+  file: string;
+}
+
+interface NoteTreeListProps extends NoteTreeProps {
+  depth: number;
+  openPaths: Set<string>;
+  onToggle: (path: string) => void;
+}
+
+interface NoteTreeItemProps extends Omit<NoteTreeListProps, 'nodes'> {
+  node: NoteNode;
+}
+
+const rowClass = 'block w-full box-border font-sans py-[4px] pr-[8px] rounded-[4px] border-0 text-left text-[14px] no-underline truncate cursor-pointer';
+
+function getFolderPaths(nodes: NoteNode[]): string[] {
+  return nodes.flatMap((node) => (
+    node.children === null ? [] : [node.path, ...getFolderPaths(node.children)]
+  ));
+}
+
+function getParentPaths(file: string): string[] {
+  const parts = file.split('/').slice(1, -1);
+  return parts.map((_, i) => `/${parts.slice(0, i + 1).join('/')}`);
+}
+
+const NoteTreeItem: React.FC<NoteTreeItemProps> = ({ node, file, depth, openPaths, onToggle }) => {
+  const paddingLeft = 8 + depth * 14;
+
+  if (node.children === null) {
+    const active = file === node.path;
+    return (
+      <li>
+        <Link
+          className={`${rowClass} ${active ? 'bg-[#2a2a2a] text-[white]' : 'text-[#c9d1d9] hover:bg-[#1f1f1f]'}`}
+          style={{ paddingLeft }}
+          href={`/notes${encodeNotePath(node.path)}`}
+          title={node.name}
+          aria-current={active ? 'page' : undefined}
+        >
+          {node.name}
+        </Link>
+      </li>
+    );
+  }
+
+  const open = openPaths.has(node.path);
+
+  return (
+    <li>
+      <button
+        className={`${rowClass} bg-transparent text-[#c9d1d9] hover:bg-[#1f1f1f]`}
+        style={{ paddingLeft }}
+        type="button"
+        title={node.name}
+        aria-expanded={open}
+        onClick={() => onToggle(node.path)}
+      >
+        {open ? '▾' : '▸'} {node.name}
+      </button>
+      {open && (
+        <NoteTreeList nodes={node.children} file={file} depth={depth + 1} openPaths={openPaths} onToggle={onToggle} />
+      )}
+    </li>
+  );
+};
+
+const NoteTreeList: React.FC<NoteTreeListProps> = ({ nodes, file, depth, openPaths, onToggle }) => (
+  <ul className="m-0 p-0 list-none">
+    {nodes.map((node) => (
+      <NoteTreeItem key={node.path} node={node} file={file} depth={depth} openPaths={openPaths} onToggle={onToggle} />
+    ))}
+  </ul>
+);
+
+const NoteTree: React.FC<NoteTreeProps> = ({ nodes, file }) => {
+  const folderPaths = useMemo(() => getFolderPaths(nodes), [nodes]);
+  const [openPaths, setOpenPaths] = useState<Set<string>>(() => new Set(getParentPaths(file)));
+  const allOpen = folderPaths.every((path) => openPaths.has(path));
+
+  useEffect(() => {
+    setOpenPaths((paths) => new Set(Array.from(paths).concat(getParentPaths(file))));
+  }, [file]);
+
+  const togglePath = (path: string) => {
+    setOpenPaths((paths) => {
+      const next = new Set(paths);
+      if (!next.delete(path)) {
+        next.add(path);
+      }
+      return next;
+    });
+  };
+
+  return (
+    <aside className="shrink-0 w-[240px] [border-right:1px_solid_#2a2a2a]">
+      <nav className="sticky top-[40px] max-h-[calc(100vh-40px)] box-border p-[12px] overflow-y-auto [color-scheme:dark]">
+        {folderPaths.length > 0 && (
+          <button
+            className="block ml-auto mb-[8px] p-0 border-0 bg-transparent font-sans text-[12px] text-[#8b949e] cursor-pointer hover:text-[white]"
+            type="button"
+            onClick={() => setOpenPaths(new Set(allOpen ? [] : folderPaths))}
+          >
+            {allOpen ? 'Collapse all' : 'Expand all'}
+          </button>
+        )}
+        <NoteTreeList nodes={nodes} file={file} depth={0} openPaths={openPaths} onToggle={togglePath} />
+      </nav>
+    </aside>
+  );
+};
+
+export default NoteTree;
