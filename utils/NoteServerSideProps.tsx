@@ -1,19 +1,17 @@
 import matter from 'gray-matter';
 
+export function getNoteApiPath(file: string) {
+  return `/api/notes${file.split('/').map(encodeURIComponent).join('/')}`;
+}
+
 export async function getNoteServerSideProps(file: string) {
-  const res = await fetch('http://main-website-backend:8080/api/notes', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ file }),
-  });
+  const res = await fetch(`http://main-website-backend:8080${getNoteApiPath(file)}`);
 
-  const json = await res.json();
-
-  if (!json.success) {
+  if (!res.ok) {
     return { notFound: true };
   }
+
+  const json = await res.json();
 
   const { data, content } = matter(json.content);
 

@@ -10,6 +10,7 @@ import matter from 'gray-matter';
 import 'highlight.js/styles/github-dark.css';
 import 'github-markdown-css/github-markdown-dark.css';
 
+import { getNoteApiPath } from './NoteServerSideProps';
 import styles from './markdown.module.css';
 
 interface RenderMarkdownProps {
@@ -25,14 +26,13 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
   useEffect(() => {
     const fetchMarkdown = async () => {
       try {
-        const res = await fetch('https://speedcubing.top/api/notes', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ file }),
-        });
+        const res = await fetch(`https://speedcubing.top${getNoteApiPath(file)}`);
+        if (!res.ok) {
+          return;
+        }
 
         const json = await res.json();
-        if (json.success && json.content !== markdown) {
+        if (json.content !== markdown) {
           const { data, content } = matter(json.content);
           const newTitle = data?.title || 'speedcubing.top Website';
           setMarkdownTitle(newTitle);
