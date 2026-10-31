@@ -14,6 +14,25 @@ export function getNoteApiPath(file: string) {
   return `/api/notes${encodeNotePath(file)}`;
 }
 
+export function getNoteTitle(title: unknown, file: string) {
+  if (title) {
+    return String(title);
+  }
+  if (file === '' || file === '/mainpage') {
+    return 'speedcubing.top Website';
+  }
+  return file.slice(file.lastIndexOf('/') + 1);
+}
+
+export function parseNote(raw: string, file: string) {
+  try {
+    const { data, content } = matter(raw, {});
+    return { content, title: getNoteTitle(data?.title, file) };
+  } catch (err) {
+    return { content: raw, title: getNoteTitle(undefined, file) };
+  }
+}
+
 export async function getNoteServerSideProps(file: string) {
   const res = await fetch(`http://main-website-backend:8080${getNoteApiPath(file)}`);
 
@@ -23,9 +42,7 @@ export async function getNoteServerSideProps(file: string) {
 
   const json = await res.json();
 
-  const { data, content } = matter(json.content);
-
-  let title = data?.title || 'speedcubing.top Website';
+  const { content, title } = parseNote(json.content, file);
 
   return {
     props: {

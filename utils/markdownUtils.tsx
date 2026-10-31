@@ -5,12 +5,11 @@ import rehypeHighlight from 'rehype-highlight';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
-import matter from 'gray-matter';
 
 import 'highlight.js/styles/github-dark.css';
 import 'github-markdown-css/github-markdown-dark.css';
 
-import { getNoteApiPath } from './NoteServerSideProps';
+import { getNoteApiPath, parseNote } from './NoteServerSideProps';
 import styles from './markdown.module.css';
 
 interface RenderMarkdownProps {
@@ -33,9 +32,8 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
 
         const json = await res.json();
         if (json.content !== markdown) {
-          const { data, content } = matter(json.content);
-          const newTitle = data?.title || 'speedcubing.top Website';
-          setMarkdownTitle(newTitle);
+          const { content, title } = parseNote(json.content, file);
+          setMarkdownTitle(title);
           setMarkdown(content);
         }
       } catch (err) {

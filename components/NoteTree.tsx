@@ -31,7 +31,7 @@ function getParentPaths(file: string): string[] {
 }
 
 const NoteTreeItem: React.FC<NoteTreeItemProps> = ({ node, file, depth, openPaths, onToggle }) => {
-  const paddingLeft = 8 + depth * 14;
+  const paddingLeft = 8 + depth * 24;
 
   if (node.children === null) {
     const active = file === node.path;
@@ -62,10 +62,31 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({ node, file, depth, openPath
         aria-expanded={open}
         onClick={() => onToggle(node.path)}
       >
-        {open ? '▾' : '▸'} {node.name}
+        <svg
+          className={`inline-block mr-[6px] align-[-1px] text-[#8b949e] transition-transform duration-100 ${open ? 'rotate-90' : ''}`}
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M4.5 2.5 8 6l-3.5 3.5" />
+        </svg>
+        {node.name}/
       </button>
       {open && (
-        <NoteTreeList nodes={node.children} file={file} depth={depth + 1} openPaths={openPaths} onToggle={onToggle} />
+        <div className="relative">
+          <span
+            className="absolute top-0 bottom-0 w-[1px] bg-[#30363d] pointer-events-none"
+            style={{ left: paddingLeft + 6 }}
+            aria-hidden="true"
+          />
+          <NoteTreeList nodes={node.children} file={file} depth={depth + 1} openPaths={openPaths} onToggle={onToggle} />
+        </div>
       )}
     </li>
   );
