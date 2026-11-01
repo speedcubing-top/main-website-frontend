@@ -10,4 +10,50 @@
 .wrapper:global(.markdown-body) {
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   line-height: 1.75;
+  letter-spacing: 0.35px;
+}
+
+.wrapper:global(.markdown-body) :global(:is(h1, h2, h3, h4, h5, h6)) {
+  font-family: "Readex Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+}
+
+.wrapper:global(.markdown-body) :global(:is(strong, b)) {
+  font-weight: 700;
+}
+
+.wrapper:global(.markdown-body) :global(:is(code, pre, kbd, samp, tt)) {
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.wrapper :global(.callout) {
+  --callout-color: #2f81f7;
+  margin-bottom: 16px;
+  padding: 8px 16px;
+  border-left: 4px solid var(--callout-color);
+}
+
+.wrapper :global(.callout-tip) {
+  --callout-color: #3fb950;
+}
+
+.wrapper :global(.callout-important) {
+  --callout-color: #a371f7;
+}
+
+.wrapper :global(.callout-warning) {
+  --callout-color: #d29922;
+}
+
+.wrapper :global(.callout-caution) {
+  --callout-color: #f85149;
+}
+
+.wrapper :global(.callout-title) {
+  font-weight: 600;
+  color: var(--callout-color);
+}
+
+.wrapper :global(.callout > :last-child) {
+  margin-bottom: 0;
 }

@@ -11,10 +11,15 @@ import 'highlight.js/styles/github-dark.css';
 import 'github-markdown-css/github-markdown-dark.css';
 
 import { getNoteApiPath, parseNote } from './NoteServerSideProps';
+import remarkCallouts from './remarkCallouts';
 import styles from './markdown.module.css';
 
 const sanitizeSchema = {
   ...defaultSchema,
+  attributes: {
+    ...defaultSchema.attributes,
+    div: [...(defaultSchema.attributes?.div ?? []), ['className', /^callout(-[a-z]+)?$/]],
+  },
   protocols: {
     ...defaultSchema.protocols,
     src: [...(defaultSchema.protocols?.src ?? []), 'data'],
@@ -98,7 +103,7 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
               </a>
             ),
           }}
-          remarkPlugins={[remarkGfm, remarkBreaks]}
+          remarkPlugins={[remarkGfm, remarkCallouts, remarkBreaks]}
           rehypePlugins={[rehypeRaw, [rehypeSanitize, sanitizeSchema], rehypeHighlight]}
           urlTransform={urlTransform}
         >
