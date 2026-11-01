@@ -14,6 +14,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           crossOrigin="anonymous"
         />
 
+        {/* Note font */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" />
+
         {/* Mobile search bar color */}
         <meta name="theme-color" content="black" />
 
