@@ -1,9 +1,9 @@
 import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
-import Markdown from 'react-markdown';
+import Markdown, { UrlTransform, defaultUrlTransform } from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeRaw from 'rehype-raw';
-import rehypeSanitize from 'rehype-sanitize';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
 
 import 'highlight.js/styles/github-dark.css';
@@ -11,6 +11,21 @@ import 'github-markdown-css/github-markdown-dark.css';
 
 import { getNoteApiPath, parseNote } from './NoteServerSideProps';
 import styles from './markdown.module.css';
+
+const sanitizeSchema = {
+  ...defaultSchema,
+  protocols: {
+    ...defaultSchema.protocols,
+    src: [...(defaultSchema.protocols?.src ?? []), 'data'],
+  },
+};
+
+const urlTransform: UrlTransform = (url, key, node) => {
+  if (node.tagName === 'img' && key === 'src' && /^data:image\//i.test(url)) {
+    return url;
+  }
+  return defaultUrlTransform(url);
+};
 
 interface RenderMarkdownProps {
   content: string;
@@ -61,7 +76,8 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
             ),
           }}
           remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeRaw, rehypeSanitize, rehypeHighlight]}
+          rehypePlugins={[rehypeRaw, [rehypeSanitize, sanitizeSchema], rehypeHighlight]}
+          urlTransform={urlTransform}
         >
           {markdown}
         </Markdown>
