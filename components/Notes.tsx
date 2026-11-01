@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import NoteList from './NoteList';
 import NoteTree from './NoteTree';
 import { NoteNode } from '../utils/NoteServerSideProps';
 import { RenderMarkdown } from '../utils/markdownUtils';
 
 interface NotesProps {
-  content: string;
+  content?: string;
   file: string;
-  title: string;
+  path?: string;
+  title?: string;
   birth?: string | null;
   modified?: string | null;
   tree?: NoteNode[];
@@ -35,7 +37,7 @@ function readSidebar() {
   return sidebar;
 }
 
-const Notes: React.FC<NotesProps> = ({ content, file, title, birth, modified, tree }) => {
+const Notes: React.FC<NotesProps> = ({ content, file, path, title, birth, modified, tree }) => {
   const [sidebar, setSidebar] = useState(readSidebar);
   const sidebarWidth = sidebar.collapsed ? 0 : sidebar.width;
 
@@ -58,7 +60,7 @@ const Notes: React.FC<NotesProps> = ({ content, file, title, birth, modified, tr
       {tree && (
         <NoteTree
           nodes={tree}
-          file={file}
+          file={path ?? file}
           collapsed={sidebar.collapsed}
           onCollapse={() => setSidebar({ ...sidebar, collapsed: true })}
           onResize={(width) => setSidebar({ ...sidebar, width: clampSidebarWidth(width) })}
@@ -77,15 +79,19 @@ const Notes: React.FC<NotesProps> = ({ content, file, title, birth, modified, tr
         </button>
       )}
       <div className={`flex-1 min-w-0 ${tree ? 'col-start-2 box-border px-[24px]' : ''}`}>
-        <RenderMarkdown
-          key={file}
-          content={content}
-          file={file}
-          title={title}
-          birth={birth}
-          modified={modified}
-          showDates={tree !== undefined}
-        />
+        {content === undefined ? (
+          <NoteList tree={tree ?? []} />
+        ) : (
+          <RenderMarkdown
+            key={file}
+            content={content}
+            file={file}
+            title={title ?? ''}
+            birth={birth}
+            modified={modified}
+            showDates={tree !== undefined}
+          />
+        )}
       </div>
     </div>
   );

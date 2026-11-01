@@ -47,7 +47,7 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({ node, file, depth, openPath
         <Link
           className={`${rowClass} ${active ? 'bg-[#2a2a2a] text-[white]' : 'text-[#c9d1d9] hover:bg-[#1f1f1f]'}`}
           style={{ paddingLeft }}
-          href={`/notes${encodeNotePath(node.path)}`}
+          href={`/notes${node.slug ? `/${node.slug}` : encodeNotePath(node.path)}`}
           title={node.name}
           aria-current={active ? 'page' : undefined}
         >

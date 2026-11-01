@@ -68,7 +68,7 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
         }
 
         const json = await res.json();
-        const { content, title, birth } = parseNote(json.content, file);
+        const { content, title, birth } = parseNote(json.content, json.path ?? file);
         setMarkdownTitle(title);
         setMarkdownBirth(birth);
         setMarkdownModified(json.modified ?? null);
