@@ -7,6 +7,13 @@ interface NoteTreeProps {
   file: string;
 }
 
+interface NoteSidebarProps extends NoteTreeProps {
+  collapsed: boolean;
+  onCollapse: () => void;
+  onResize: (width: number) => void;
+  onResetWidth: () => void;
+}
+
 interface NoteTreeListProps extends NoteTreeProps {
   depth: number;
   openPaths: Set<string>;
@@ -100,7 +107,7 @@ const NoteTreeList: React.FC<NoteTreeListProps> = ({ nodes, file, depth, openPat
   </ul>
 );
 
-const NoteTree: React.FC<NoteTreeProps> = ({ nodes, file }) => {
+const NoteTree: React.FC<NoteSidebarProps> = ({ nodes, file, collapsed, onCollapse, onResize, onResetWidth }) => {
   const folderPaths = useMemo(() => getFolderPaths(nodes), [nodes]);
   const [openPaths, setOpenPaths] = useState<Set<string>>(() => new Set(getParentPaths(file)));
   const allOpen = folderPaths.every((path) => openPaths.has(path));
@@ -120,19 +127,46 @@ const NoteTree: React.FC<NoteTreeProps> = ({ nodes, file }) => {
   };
 
   return (
-    <aside className="box-border [border-right:1px_solid_#2a2a2a]">
+    <aside className={`relative min-w-0 box-border [border-right:1px_solid_#2a2a2a] ${collapsed ? 'hidden' : ''}`}>
       <nav className="sticky top-[40px] max-h-[calc(100vh-40px)] box-border p-[12px] overflow-y-auto [color-scheme:dark]">
-        {folderPaths.length > 0 && (
+        <div className="flex items-center mb-[8px]">
+          {folderPaths.length > 0 && (
+            <button
+              className="p-0 border-0 bg-transparent font-sans text-[12px] text-[#8b949e] cursor-pointer hover:text-[white]"
+              type="button"
+              onClick={() => setOpenPaths(new Set(allOpen ? [] : folderPaths))}
+            >
+              {allOpen ? 'Collapse all' : 'Expand all'}
+            </button>
+          )}
           <button
-            className="block ml-auto mb-[8px] p-0 border-0 bg-transparent font-sans text-[12px] text-[#8b949e] cursor-pointer hover:text-[white]"
+            className="ml-auto p-0 border-0 bg-transparent font-sans text-[16px] leading-none text-[#8b949e] cursor-pointer hover:text-[white]"
             type="button"
-            onClick={() => setOpenPaths(new Set(allOpen ? [] : folderPaths))}
+            title="Hide sidebar"
+            aria-label="Hide sidebar"
+            onClick={onCollapse}
           >
-            {allOpen ? 'Collapse all' : 'Expand all'}
+            «
           </button>
-        )}
+        </div>
         <NoteTreeList nodes={nodes} file={file} depth={0} openPaths={openPaths} onToggle={togglePath} />
       </nav>
+      <div
+        className="absolute top-0 bottom-0 right-[-3px] z-[1] w-[6px] cursor-col-resize touch-none hover:bg-[#30363d]"
+        role="separator"
+        aria-orientation="vertical"
+        title="Drag to resize, double-click to reset"
+        onPointerDown={(event) => {
+          event.preventDefault();
+          event.currentTarget.setPointerCapture(event.pointerId);
+        }}
+        onPointerMove={(event) => {
+          if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            onResize(event.clientX);
+          }
+        }}
+        onDoubleClick={onResetWidth}
+      />
     </aside>
   );
 };

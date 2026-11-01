@@ -6,3 +6,8 @@ body {
   margin: 0;
   padding: 0;
 }
+
+/* The volume tooltip sits over the top of the page and must not take clicks. */
+.range-slider__tooltip {
+  pointer-events: none;
+}
