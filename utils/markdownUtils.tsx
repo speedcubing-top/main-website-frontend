@@ -4,6 +4,7 @@ import Markdown, { UrlTransform, defaultUrlTransform } from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
+import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 
 import 'highlight.js/styles/github-dark.css';
@@ -75,7 +76,7 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
               </a>
             ),
           }}
-          remarkPlugins={[remarkGfm]}
+          remarkPlugins={[remarkGfm, remarkBreaks]}
           rehypePlugins={[rehypeRaw, [rehypeSanitize, sanitizeSchema], rehypeHighlight]}
           urlTransform={urlTransform}
         >
