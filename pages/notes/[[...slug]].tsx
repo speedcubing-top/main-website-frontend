@@ -5,12 +5,14 @@ interface NotesPageProps {
   content: string;
   file: string;
   title: string;
+  birth: string | null;
+  modified: string | null;
   tree: NoteNode[];
 }
 
-export default function NotesPage({ content, file, title, tree }: NotesPageProps) {
+export default function NotesPage({ content, file, title, birth, modified, tree }: NotesPageProps) {
   return (
-    <Notes content={content} file={file} title={title} tree={tree} />
+    <Notes content={content} file={file} title={title} birth={birth} modified={modified} tree={tree} />
   );
 }
 

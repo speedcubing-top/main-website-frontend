@@ -24,12 +24,18 @@ export function getNoteTitle(title: unknown, file: string) {
   return file.slice(file.lastIndexOf('/') + 1);
 }
 
+// YAML turns dates into UTC Date objects, so read the value as it was written.
+function getNoteBirth(frontMatter: string) {
+  const match = frontMatter.match(/^date:[ \t]*["']?(.*?)["']?[ \t]*$/m);
+  return match?.[1] || null;
+}
+
 export function parseNote(raw: string, file: string) {
   try {
-    const { data, content } = matter(raw, {});
-    return { content, title: getNoteTitle(data?.title, file) };
+    const { data, content, matter: frontMatter } = matter(raw, {}) as ReturnType<typeof matter> & { matter: string };
+    return { content, title: getNoteTitle(data?.title, file), birth: getNoteBirth(frontMatter) };
   } catch (err) {
-    return { content: raw, title: getNoteTitle(undefined, file) };
+    return { content: raw, title: getNoteTitle(undefined, file), birth: null };
   }
 }
 
@@ -42,13 +48,15 @@ export async function getNoteServerSideProps(file: string) {
 
   const json = await res.json();
 
-  const { content, title } = parseNote(json.content, file);
+  const { content, title, birth } = parseNote(json.content, file);
 
   return {
     props: {
       content,
 	  file,
 	  title,
+	  birth,
+	  modified: json.modified ?? null,
     },
   };
 }

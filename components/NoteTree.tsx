@@ -120,7 +120,7 @@ const NoteTree: React.FC<NoteTreeProps> = ({ nodes, file }) => {
   };
 
   return (
-    <aside className="shrink-0 w-[240px] [border-right:1px_solid_#2a2a2a]">
+    <aside className="box-border [border-right:1px_solid_#2a2a2a]">
       <nav className="sticky top-[40px] max-h-[calc(100vh-40px)] box-border p-[12px] overflow-y-auto [color-scheme:dark]">
         {folderPaths.length > 0 && (
           <button

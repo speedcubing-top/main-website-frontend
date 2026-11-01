@@ -32,11 +32,27 @@ interface RenderMarkdownProps {
   content: string;
   file: string;
   title: string;
+  birth?: string | null;
+  modified?: string | null;
+  showDates?: boolean;
 }
 
-export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, title }) => {
+function formatModified(modified: string | null) {
+  const date = modified ? new Date(modified) : null;
+  if (!date || isNaN(date.getTime())) {
+    return null;
+  }
+
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} `
+    + `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
+export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, title, birth = null, modified = null, showDates = false }) => {
   const [markdown, setMarkdown] = useState<string>(content);
   const [markdownTitle, setMarkdownTitle] = useState<string>(title);
+  const [markdownBirth, setMarkdownBirth] = useState<string | null>(birth);
+  const [markdownModified, setMarkdownModified] = useState<string | null>(modified);
 
   useEffect(() => {
     const fetchMarkdown = async () => {
@@ -47,11 +63,11 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
         }
 
         const json = await res.json();
-        if (json.content !== markdown) {
-          const { content, title } = parseNote(json.content, file);
-          setMarkdownTitle(title);
-          setMarkdown(content);
-        }
+        const { content, title, birth } = parseNote(json.content, file);
+        setMarkdownTitle(title);
+        setMarkdownBirth(birth);
+        setMarkdownModified(json.modified ?? null);
+        setMarkdown(content);
       } catch (err) {
         console.error('Fetch error:', err);
       }
@@ -68,6 +84,12 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
         <title>{markdownTitle}</title>
       </Head>
       <div className={`markdown-body ${styles.wrapper}`}>
+        {showDates && (
+          <div className="mb-[24px] text-[14px] text-[#8b949e]">
+            <div>Birth: {markdownBirth ?? 'Unknown'}</div>
+            <div>Modify: {formatModified(markdownModified) ?? 'Unknown'}</div>
+          </div>
+        )}
         <Markdown
           components={{
             a: ({ href, children }) => (
