@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import type { AppProps } from 'next/app';
 import Layout from '../components/Layout';
+import PageSeo from '../components/PageSeo';
 import '../styles/globals.css';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
@@ -36,6 +37,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
       </Head>
+
+      {pageProps.seo && <PageSeo {...pageProps.seo} />}
 
       <Layout>
         <Component {...pageProps} />

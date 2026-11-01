@@ -11,10 +11,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const link = context.query.url;
   if (typeof link !== 'string') {
     context.res.statusCode = 400;
-    return { props: { link: null } };
+    return { props: { link: null, seo: { noindex: true } } };
   }
 
-  return { props: { link } };
+  return { props: { link, seo: { noindex: true } } };
 };
 
 const Redirect = ({ link }: Props) => {

@@ -58,6 +58,12 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
   const [markdownTitle, setMarkdownTitle] = useState<string>(title);
   const [markdownBirth, setMarkdownBirth] = useState<string | null>(birth);
   const [markdownModified, setMarkdownModified] = useState<string | null>(modified);
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  // The server doesn't know the viewer's timezone, so Modify is formatted after hydration.
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const fetchMarkdown = async () => {
@@ -92,7 +98,7 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
         {showDates && (
           <div className="mb-[24px] text-[14px] text-[#8b949e]">
             <div>Birth: {markdownBirth ?? 'Unknown'}</div>
-            <div>Modify: {formatModified(markdownModified) ?? 'Unknown'}</div>
+            <div>Modify: {mounted && (formatModified(markdownModified) ?? 'Unknown')}</div>
           </div>
         )}
         <Markdown

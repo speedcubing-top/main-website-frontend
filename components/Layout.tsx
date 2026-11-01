@@ -1,6 +1,5 @@
 import React, { useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/router';
-import Loading from './Loading';
 import MuzakPlayer from "./MuzakPlayer";
 import Link from 'next/link';
 import styles from './Layout.module.css';
@@ -13,7 +12,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter();
   const [name, setName] = useState<string>('');
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -31,7 +29,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         setName(data.name);
         setLoggedIn(true);
       }
-      setLoading(false);
     };
 
     checkLogin();
@@ -82,7 +79,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         )}
       </header>
 
-      <main className="flex-[1] flex flex-col h-screen">{loading ? <Loading /> : children}</main>
+      <main className="flex-[1] flex flex-col h-screen">{children}</main>
 
       <footer className="h-[20px] p-[10px] bg-[#000000] text-[white] font-['JetBrains_Mono',_monospace] text-center">
         <span>© 2025 speedcubing.top</span>

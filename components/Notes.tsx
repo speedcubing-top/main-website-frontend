@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import NoteList from './NoteList';
 import NoteTree from './NoteTree';
 import { NoteNode } from '../utils/NoteServerSideProps';
@@ -38,10 +38,18 @@ function readSidebar() {
 }
 
 const Notes: React.FC<NotesProps> = ({ content, file, path, title, birth, modified, tree }) => {
-  const [sidebar, setSidebar] = useState(readSidebar);
+  const [sidebar, setSidebar] = useState({ width: DEFAULT_SIDEBAR_WIDTH, collapsed: false });
+  const sidebarLoaded = useRef(false);
   const sidebarWidth = sidebar.collapsed ? 0 : sidebar.width;
 
   useEffect(() => {
+    // Storage only exists in the browser, so it's read after hydration.
+    if (!sidebarLoaded.current) {
+      sidebarLoaded.current = true;
+      setSidebar(readSidebar());
+      return;
+    }
+
     try {
       localStorage.setItem(SIDEBAR_STORAGE_KEY, JSON.stringify(sidebar));
     } catch (err) {

@@ -1,4 +1,5 @@
 import React, { useState, FormEvent } from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 const Login: React.FC = () => {
@@ -27,6 +28,9 @@ const Login: React.FC = () => {
 
   return (
     <div className="flex-1 bg-[#101010]">
+      <Head>
+        <meta name="robots" content="noindex" />
+      </Head>
       <table align="center" width="200" border={0}>
         <tbody>
           <tr>

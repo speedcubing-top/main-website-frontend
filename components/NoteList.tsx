@@ -1,14 +1,12 @@
 import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { NoteNode, encodeNotePath } from '../utils/NoteServerSideProps';
+import { NOTE_DATE_PATTERN, NoteNode, encodeNotePath } from '../utils/NoteServerSideProps';
 import styles from '../utils/markdown.module.css';
 
 interface NoteListProps {
   tree: NoteNode[];
 }
-
-const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}( \d{2}:\d{2}(:\d{2})?)?$/;
 
 function getNotes(nodes: NoteNode[]): NoteNode[] {
   return nodes.flatMap((node) => (node.children === null ? [node] : getNotes(node.children)));
@@ -47,7 +45,7 @@ const NoteRow: React.FC<{ note: NoteNode; dated: boolean }> = ({ note, dated }) 
 
 const NoteList: React.FC<NoteListProps> = ({ tree }) => {
   const notes = getNotes(tree);
-  const dated = notes.filter((note) => DATE_PATTERN.test(note.date ?? '')).sort(byDateDesc);
+  const dated = notes.filter((note) => NOTE_DATE_PATTERN.test(note.date ?? '')).sort(byDateDesc);
   const undated = notes.filter((note) => !dated.includes(note)).sort(byTitle);
 
   return (
