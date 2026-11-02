@@ -1,8 +1,10 @@
 import React, { useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/router';
+import Loading from './Loading';
 import MuzakPlayer from "./MuzakPlayer";
 import Link from 'next/link';
 import styles from './Layout.module.css';
+import { isNotesUrl, useNavigatingTo } from '../utils/useNavigation';
 
 const FIRST_YEAR = 2025;
 
@@ -19,6 +21,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter();
   const [name, setName] = useState<string>('');
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const navigatingTo = useNavigatingTo();
+  // Notes handles note-to-note navigation itself, so its sidebar stays put.
+  const notesKeepSidebar = navigatingTo !== null && isNotesUrl(navigatingTo) && router.pathname === '/notes/[[...slug]]';
+  const loading = navigatingTo !== null && !notesKeepSidebar;
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -86,7 +92,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         )}
       </header>
 
-      <main className="flex-[1] flex flex-col h-screen">{children}</main>
+      <main className="flex-[1] flex flex-col h-screen">
+        {loading ? <Loading key={navigatingTo ?? undefined} url={navigatingTo ?? undefined} /> : children}
+      </main>
 
       <footer className="h-[20px] p-[10px] bg-[#000000] text-[white] font-['JetBrains_Mono',_monospace] text-center">
         {/* Static pages keep the year from build time, so a stale year after New Year is expected. */}

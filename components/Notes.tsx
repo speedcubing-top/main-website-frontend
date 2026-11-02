@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
 import Loading from './Loading';
 import NoteList from './NoteList';
 import NoteToc from './NoteToc';
 import NoteTree from './NoteTree';
 import { NoteNode } from '../utils/NoteServerSideProps';
 import { NoteHeading, RenderMarkdown } from '../utils/markdownUtils';
+import { isNotesUrl, useNavigatingTo } from '../utils/useNavigation';
 
 interface NotesProps {
   content?: string;
@@ -44,24 +44,10 @@ const Notes: React.FC<NotesProps> = ({ content, file, path, title, birth, modifi
   const [sidebar, setSidebar] = useState({ width: DEFAULT_SIDEBAR_WIDTH, collapsed: false });
   const sidebarLoaded = useRef(false);
   const sidebarWidth = sidebar.collapsed ? 0 : sidebar.width;
-  const router = useRouter();
-  const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   const [headings, setHeadings] = useState<NoteHeading[]>([]);
-
-  // Notes come from getServerSideProps, so show Loading while the next one is fetched.
-  useEffect(() => {
-    const start = (url: string, { shallow }: { shallow: boolean }) => setNavigatingTo(shallow ? null : url);
-    const done = () => setNavigatingTo(null);
-
-    router.events.on('routeChangeStart', start);
-    router.events.on('routeChangeComplete', done);
-    router.events.on('routeChangeError', done);
-    return () => {
-      router.events.off('routeChangeStart', start);
-      router.events.off('routeChangeComplete', done);
-      router.events.off('routeChangeError', done);
-    };
-  }, [router.events]);
+  // Between notes the sidebar stays and only the note shows Loading; Layout covers every other navigation.
+  const navigatingTo = useNavigatingTo();
+  const loadingNote = tree !== undefined && navigatingTo !== null && isNotesUrl(navigatingTo);
 
   useEffect(() => {
     // Storage only exists in the browser, so it's read after hydration.
@@ -108,8 +94,8 @@ const Notes: React.FC<NotesProps> = ({ content, file, path, title, birth, modifi
         </button>
       )}
       <div className={`flex-1 min-w-0 ${tree ? 'col-start-2 box-border px-[24px]' : ''}`}>
-        {navigatingTo ? (
-          <Loading key={navigatingTo} url={navigatingTo} />
+        {loadingNote ? (
+          <Loading key={navigatingTo ?? undefined} url={navigatingTo ?? undefined} />
         ) : content === undefined ? (
           <NoteList tree={tree ?? []} />
         ) : (
@@ -125,7 +111,7 @@ const Notes: React.FC<NotesProps> = ({ content, file, path, title, birth, modifi
           />
         )}
       </div>
-      {tree && !navigatingTo && content !== undefined && headings.length > 1 && <NoteToc headings={headings} />}
+      {tree && !loadingNote && content !== undefined && headings.length > 1 && <NoteToc headings={headings} />}
     </div>
   );
 };
