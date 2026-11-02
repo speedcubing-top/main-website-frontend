@@ -24,7 +24,8 @@ interface NoteTreeItemProps extends Omit<NoteTreeListProps, 'nodes'> {
   node: NoteNode;
 }
 
-const rowClass = 'block w-full box-border font-[\'Inter\',_sans-serif] font-medium tracking-[0.35px] py-[6px] pr-[8px] rounded-[4px] border-0 text-left text-[14px] no-underline truncate cursor-pointer';
+// Matches HackMD's book sidebar: 14px on a 20px line, 36px rows, notes 400 and folders 500.
+const rowClass = 'block w-full box-border font-[\'Inter\',_sans-serif] py-[8px] pr-[8px] rounded-[4px] border-0 text-left text-[14px] leading-[20px] no-underline truncate cursor-pointer';
 
 function getFolderPaths(nodes: NoteNode[]): string[] {
   return nodes.flatMap((node) => (
@@ -45,7 +46,7 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({ node, file, depth, openPath
     return (
       <li>
         <Link
-          className={`${rowClass} ${active ? 'bg-[#2a2a2a] text-[white]' : 'text-[#c9d1d9] hover:bg-[#1f1f1f]'}`}
+          className={`${rowClass} font-normal ${active ? 'bg-[#2a2a2a] text-[white]' : 'text-[#c9d1d9] hover:bg-[#1f1f1f]'}`}
           style={{ paddingLeft }}
           href={`/notes${node.slug ? `/${node.slug}` : encodeNotePath(node.path)}`}
           title={node.name}
@@ -62,7 +63,7 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({ node, file, depth, openPath
   return (
     <li>
       <button
-        className={`${rowClass} bg-transparent text-[#c9d1d9] hover:bg-[#1f1f1f]`}
+        className={`${rowClass} font-medium bg-transparent text-[#c9d1d9] hover:bg-[#1f1f1f]`}
         style={{ paddingLeft }}
         type="button"
         title={node.name}

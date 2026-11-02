@@ -39,12 +39,14 @@
 .link {
   display: block;
   margin-left: -1px;
-  padding-top: 4px;
-  padding-bottom: 4px;
+  padding-top: 6px;
+  padding-bottom: 6px;
   border-left: 2px solid transparent;
   color: #8b949e;
-  font-size: 13px;
-  line-height: 1.5;
+  /* Matches HackMD's table of contents: 12px on a 16px line, 28px rows. */
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
   text-decoration: none;
 }
 
