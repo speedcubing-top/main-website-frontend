@@ -173,7 +173,7 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
             // After sanitize, which would prefix the ids with user-content-.
             rehypeSlug,
             [rehypeAutolinkHeadings, {
-              behavior: 'append',
+              behavior: 'prepend',
               properties: { className: ['heading-anchor'], ariaLabel: 'Link to this section' },
               content: [],
             }],

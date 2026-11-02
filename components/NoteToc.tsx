@@ -41,8 +41,8 @@ const NoteToc: React.FC<NoteTocProps> = ({ headings }) => {
 
   return (
     <aside className={`col-start-3 row-start-1 min-w-0 ${styles.toc}`}>
-      <nav className={styles.nav} aria-label="Contents">
-        <div className={styles.title}>Contents</div>
+      <nav className={styles.nav} aria-label="Table of contents">
+        <div className={styles.title}>TOC</div>
         <ul className={styles.list}>
           {headings.map((heading) => (
             <li key={heading.id}>

@@ -93,12 +93,16 @@
 }
 
 .wrapper:global(.markdown-body) :global(:is(h1, h2, h3, h4, h5, h6)) {
+  position: relative;
   /* Keep headings clear of the sticky site header when jumping to them. */
   scroll-margin-top: 56px;
 }
 
 .wrapper :global(.heading-anchor) {
-  margin-left: 8px;
+  /* Sits in the gutter left of the heading, like GitHub. */
+  position: absolute;
+  right: 100%;
+  padding-right: 6px;
   color: #8b949e;
   opacity: 0;
 }
