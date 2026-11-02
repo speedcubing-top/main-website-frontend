@@ -4,6 +4,13 @@ import MuzakPlayer from "./MuzakPlayer";
 import Link from 'next/link';
 import styles from './Layout.module.css';
 
+const FIRST_YEAR = 2025;
+
+function getCopyrightYears() {
+  const year = new Date().getFullYear();
+  return year > FIRST_YEAR ? `${FIRST_YEAR}–${year}` : `${FIRST_YEAR}`;
+}
+
 interface LayoutProps {
   children: ReactNode;
 }
@@ -82,7 +89,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <main className="flex-[1] flex flex-col h-screen">{children}</main>
 
       <footer className="h-[20px] p-[10px] bg-[#000000] text-[white] font-['JetBrains_Mono',_monospace] text-center">
-        <span>© 2025 speedcubing.top</span>
+        {/* Static pages keep the year from build time, so a stale year after New Year is expected. */}
+        <span suppressHydrationWarning>© {getCopyrightYears()} speedcubing.top</span>
       </footer>
     </div>
   );

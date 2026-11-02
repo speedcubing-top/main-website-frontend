@@ -9,6 +9,9 @@ export interface NoteNode {
 }
 
 export interface PageSeo {
+  title?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string | null;
   canonical?: string;
   description?: string | null;
   jsonLd?: object | null;
@@ -74,14 +77,18 @@ function getNoteUrl(path: string, slug?: string | null) {
   return `${SITE_URL}/notes${slug ? `/${slug}` : encodeNotePath(path)}`;
 }
 
-function getNoteJsonLd(url: string, title: string, description: string | null, birth: string | null) {
+function getNotePublishedTime(birth: string | null) {
+  return birth && NOTE_DATE_PATTERN.test(birth) ? birth.replace(' ', 'T') : null;
+}
+
+function getNoteJsonLd(url: string, title: string, description: string | null, publishedTime: string | null) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: title,
     description: description ?? undefined,
     // Modify comes from the file's mtime, which a clone resets, so dateModified is left out.
-    datePublished: birth && NOTE_DATE_PATTERN.test(birth) ? birth.replace(' ', 'T') : undefined,
+    datePublished: publishedTime ?? undefined,
     url,
     mainEntityOfPage: url,
     author: { '@type': 'Person', name: 'speedcubing', url: SITE_URL },
@@ -112,7 +119,7 @@ export async function getNoteListServerSideProps() {
     props: {
       file: '',
       tree: await getNoteTree(),
-      seo: { canonical: `${SITE_URL}/notes`, description: NOTE_LIST_DESCRIPTION },
+      seo: { title: 'Notes', canonical: `${SITE_URL}/notes`, description: NOTE_LIST_DESCRIPTION },
     },
   };
 }
@@ -133,6 +140,8 @@ export async function getNoteServerSideProps(file: string) {
   const path: string = json.path ?? file;
   const { content, title, birth, description } = parseNote(json.content, path);
   const canonical = getNoteUrl(path, json.slug);
+  const isNote = path !== '/mainpage';
+  const publishedTime = getNotePublishedTime(birth);
 
   return {
     props: {
@@ -143,9 +152,12 @@ export async function getNoteServerSideProps(file: string) {
 	  birth,
 	  modified: json.modified ?? null,
 	  seo: {
+	    title,
+	    type: isNote ? 'article' : 'website',
+	    publishedTime: isNote ? publishedTime : null,
 	    canonical,
 	    description,
-	    jsonLd: path === '/mainpage' ? null : getNoteJsonLd(canonical, title, description, birth),
+	    jsonLd: isNote ? getNoteJsonLd(canonical, title, description, publishedTime) : null,
 	  },
     },
   };
