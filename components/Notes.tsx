@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
+import Loading from './Loading';
 import NoteList from './NoteList';
 import NoteTree from './NoteTree';
 import { NoteNode } from '../utils/NoteServerSideProps';
@@ -41,6 +43,23 @@ const Notes: React.FC<NotesProps> = ({ content, file, path, title, birth, modifi
   const [sidebar, setSidebar] = useState({ width: DEFAULT_SIDEBAR_WIDTH, collapsed: false });
   const sidebarLoaded = useRef(false);
   const sidebarWidth = sidebar.collapsed ? 0 : sidebar.width;
+  const router = useRouter();
+  const [navigating, setNavigating] = useState(false);
+
+  // Notes come from getServerSideProps, so show Loading while the next one is fetched.
+  useEffect(() => {
+    const start = (_url: string, { shallow }: { shallow: boolean }) => setNavigating(!shallow);
+    const done = () => setNavigating(false);
+
+    router.events.on('routeChangeStart', start);
+    router.events.on('routeChangeComplete', done);
+    router.events.on('routeChangeError', done);
+    return () => {
+      router.events.off('routeChangeStart', start);
+      router.events.off('routeChangeComplete', done);
+      router.events.off('routeChangeError', done);
+    };
+  }, [router.events]);
 
   useEffect(() => {
     // Storage only exists in the browser, so it's read after hydration.
@@ -87,7 +106,9 @@ const Notes: React.FC<NotesProps> = ({ content, file, path, title, birth, modifi
         </button>
       )}
       <div className={`flex-1 min-w-0 ${tree ? 'col-start-2 box-border px-[24px]' : ''}`}>
-        {content === undefined ? (
+        {navigating ? (
+          <Loading />
+        ) : content === undefined ? (
           <NoteList tree={tree ?? []} />
         ) : (
           <RenderMarkdown
