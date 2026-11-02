@@ -121,27 +121,37 @@
   opacity: 1;
 }
 
-.wrapper:global(.markdown-body) .image {
-  max-width: 80%;
+.zoomable {
   cursor: zoom-in;
 }
 
-:global(a) > .image {
+:global(a) > .zoomable {
   cursor: pointer;
 }
 
-.lightbox {
+.viewer {
   position: fixed;
   inset: 0;
   z-index: 50;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: auto;
   background-color: rgba(0, 0, 0, 0.85);
   cursor: zoom-out;
 }
 
-.wrapper:global(.markdown-body) .lightbox img {
+/* margin: auto centers without clipping the left and top edges once the image overflows. */
+.viewerFit,
+.viewerZoomed {
+  flex-shrink: 0;
+  margin: auto;
+}
+
+.viewerFit {
   max-width: 95vw;
   max-height: 95vh;
+  cursor: zoom-in;
+}
+
+.viewerZoomed {
+  cursor: zoom-out;
 }

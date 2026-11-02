@@ -1,5 +1,6 @@
 import Head from 'next/head';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Markdown, { ExtraProps, UrlTransform, defaultUrlTransform } from 'react-markdown';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeHighlight from 'rehype-highlight';
@@ -77,40 +78,101 @@ const CodeBlock: React.FC<React.ComponentProps<'pre'> & ExtraProps> = ({ node, r
   );
 };
 
-// Images are shown smaller than the column, so clicking one opens it full size.
-const NoteImage: React.FC<React.ComponentProps<'img'> & ExtraProps> = ({ node, ref, ...props }) => {
-  const [zoomed, setZoomed] = useState(false);
+const IMAGE_ZOOM = 2;
+
+interface ImageZoom {
+  width: number;
+  // Where the click landed, so that spot stays under the cursor after zooming.
+  offsetX: number;
+  offsetY: number;
+  clientX: number;
+  clientY: number;
+}
+
+interface ImageViewerProps {
+  src?: string;
+  alt?: string;
+  onClose: () => void;
+}
+
+// Opens fitted to the screen; clicking the image zooms in, clicking again goes back.
+const ImageViewer: React.FC<ImageViewerProps> = ({ src, alt, onClose }) => {
+  const viewerRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const [zoom, setZoom] = useState<ImageZoom | null>(null);
 
   useEffect(() => {
-    if (!zoomed) {
-      return;
-    }
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setZoomed(false);
+        onClose();
       }
     };
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [zoomed]);
+    return () => {
+      document.body.style.overflow = overflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [onClose]);
+
+  useLayoutEffect(() => {
+    const viewer = viewerRef.current;
+    const image = imageRef.current;
+    if (!zoom || !viewer || !image) {
+      return;
+    }
+    const rect = image.getBoundingClientRect();
+    viewer.scrollLeft += rect.left + zoom.offsetX * IMAGE_ZOOM - zoom.clientX;
+    viewer.scrollTop += rect.top + zoom.offsetY * IMAGE_ZOOM - zoom.clientY;
+  }, [zoom]);
+
+  return createPortal(
+    <div ref={viewerRef} className={styles.viewer} role="dialog" aria-modal="true" aria-label={alt || 'Image'} onClick={onClose}>
+      <img
+        ref={imageRef}
+        className={zoom ? styles.viewerZoomed : styles.viewerFit}
+        style={zoom ? { width: zoom.width } : undefined}
+        src={src}
+        alt={alt}
+        onClick={(event) => {
+          event.stopPropagation();
+          if (zoom) {
+            setZoom(null);
+            return;
+          }
+          const rect = event.currentTarget.getBoundingClientRect();
+          setZoom({
+            width: rect.width * IMAGE_ZOOM,
+            offsetX: event.clientX - rect.left,
+            offsetY: event.clientY - rect.top,
+            clientX: event.clientX,
+            clientY: event.clientY,
+          });
+        }}
+      />
+    </div>,
+    document.body,
+  );
+};
+
+const NoteImage: React.FC<React.ComponentProps<'img'> & ExtraProps> = ({ node, ref, ...props }) => {
+  const [open, setOpen] = useState(false);
+  const close = useRef(() => setOpen(false)).current;
 
   return (
     <>
       <img
         {...props}
-        className={styles.image}
+        className={styles.zoomable}
         onClick={(event) => {
           // A linked image should follow its link instead.
           if (!event.currentTarget.closest('a')) {
-            setZoomed(true);
+            setOpen(true);
           }
         }}
       />
-      {zoomed && (
-        <span className={styles.lightbox} role="dialog" aria-label="Image" onClick={() => setZoomed(false)}>
-          <img src={props.src} alt={props.alt} />
-        </span>
-      )}
+      {open && <ImageViewer src={props.src} alt={props.alt} onClose={close} />}
     </>
   );
 };
