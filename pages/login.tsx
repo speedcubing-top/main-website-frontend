@@ -36,11 +36,11 @@ const Login: React.FC = () => {
           <tr>
             <td>
               {errorMessage && (
-                <p className="font-['JetBrains_Mono',_monospace] text-white">{errorMessage}</p>
+                <p className="font-[family-name:var(--font-jetbrains-mono),_monospace] text-white">{errorMessage}</p>
               )}
               <form onSubmit={handleSubmit} id="myform">
                 <label
-                  className="font-['JetBrains_Mono',_monospace] text-white"
+                  className="font-[family-name:var(--font-jetbrains-mono),_monospace] text-white"
                   htmlFor="username"
                 >
                   Username:
@@ -48,7 +48,7 @@ const Login: React.FC = () => {
                 <input type="text" id="username" name="username" />
                 <br />
                 <label
-                  className="font-['JetBrains_Mono',_monospace] text-white"
+                  className="font-[family-name:var(--font-jetbrains-mono),_monospace] text-white"
                   htmlFor="password"
                 >
                   Password:

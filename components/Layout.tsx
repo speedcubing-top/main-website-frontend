@@ -49,7 +49,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="flex flex-col min-h-[100dvh]">
-      <header className="sticky z-10 top-[0] h-[20px] p-[10px] bg-[#000000] text-[white] text-center font-['JetBrains_Mono',_monospace] cursor-default select-none">
+      <header className="sticky z-10 top-[0] h-[20px] p-[10px] bg-[#000000] text-[white] text-center font-[family-name:var(--font-jetbrains-mono),_monospace] cursor-default select-none">
         <div className="absolute -left-[-10px]">
           <MuzakPlayer />
         </div>
@@ -96,7 +96,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {loading ? <Loading key={navigatingTo ?? undefined} url={navigatingTo ?? undefined} /> : children}
       </main>
 
-      <footer className="h-[20px] p-[10px] bg-[#000000] text-[white] font-['JetBrains_Mono',_monospace] text-center">
+      <footer className="h-[20px] p-[10px] bg-[#000000] text-[white] font-[family-name:var(--font-jetbrains-mono),_monospace] text-center">
         {/* Static pages keep the year from build time, so a stale year after New Year is expected. */}
         <span suppressHydrationWarning>© {getCopyrightYears()} speedcubing.top</span>
       </footer>

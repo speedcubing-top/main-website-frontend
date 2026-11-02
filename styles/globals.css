@@ -11,3 +11,20 @@ body {
 .range-slider__tooltip {
   pointer-events: none;
 }
+
+/* The page waits behind this until the web fonts arrive, see pages/_document.tsx. */
+html.fonts-loading #__next {
+  visibility: hidden;
+}
+
+html.fonts-loading::after {
+  content: "Loading... please wait";
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #101010;
+  color: white;
+  font: 700 2em monospace;
+}

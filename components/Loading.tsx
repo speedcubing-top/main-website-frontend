@@ -56,7 +56,7 @@ const Loading: React.FC<LoadingProps> = ({ url }) => {
   }, [url]);
 
   return (
-    <div className="flex-1 h-full flex flex-col items-center justify-center bg-[#101010] text-center font-['JetBrains_Mono',_monospace]">
+    <div className="flex-1 h-full flex flex-col items-center justify-center bg-[#101010] text-center font-[family-name:var(--font-jetbrains-mono),_monospace]">
       <h1 className="m-0 text-[white]">Loading... please wait</h1>
       {requests && (
         <div className="mt-[24px] max-w-[90%] text-left text-[13px] leading-[22px] text-[#8b949e] break-all">

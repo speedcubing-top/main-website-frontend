@@ -10,7 +10,7 @@
   padding: 50px 16px 24px 0;
   overflow-y: auto;
   color-scheme: dark;
-  font-family: Inter, sans-serif;
+  font-family: var(--font-inter), sans-serif;
   letter-spacing: 0.35px;
 }
 

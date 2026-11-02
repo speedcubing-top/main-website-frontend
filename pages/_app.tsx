@@ -1,8 +1,15 @@
 import Head from 'next/head';
 import type { AppProps } from 'next/app';
+import { Inter, JetBrains_Mono, Readex_Pro } from 'next/font/google';
 import Layout from '../components/Layout';
 import PageSeo from '../components/PageSeo';
 import '../styles/globals.css';
+
+// Self-hosted and preloaded by next/font; _document keeps the page behind Loading until they arrive.
+const inter = Inter({ subsets: ['latin', 'latin-ext'], weight: ['400', '500', '600', '700'], variable: '--font-inter' });
+const readexPro = Readex_Pro({ subsets: ['latin', 'latin-ext'], weight: ['400', '700'], variable: '--font-readex-pro' });
+const jetBrainsMono = JetBrains_Mono({ subsets: ['latin', 'latin-ext'], weight: ['400', '700'], variable: '--font-jetbrains-mono' });
+const fontVariables = `${inter.variable} ${readexPro.variable} ${jetBrainsMono.variable}`;
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -14,11 +21,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7151600814264166"
           crossOrigin="anonymous"
         />
-
-        {/* Site and note fonts */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Readex+Pro:wght@400;700&display=swap" />
 
         {/* Mobile search bar color */}
         <meta name="theme-color" content="black" />
@@ -42,9 +44,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
       {pageProps.seo && <PageSeo {...pageProps.seo} />}
 
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <div className={fontVariables}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </div>
     </>
   );
 }

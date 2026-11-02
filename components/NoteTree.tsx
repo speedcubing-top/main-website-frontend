@@ -25,7 +25,7 @@ interface NoteTreeItemProps extends Omit<NoteTreeListProps, 'nodes'> {
 }
 
 // Matches HackMD's book sidebar: 14px on a 20px line, 36px rows, notes 400 and folders 500.
-const rowClass = 'block w-full box-border font-[\'Inter\',_sans-serif] py-[8px] pr-[8px] rounded-[4px] border-0 text-left text-[14px] leading-[20px] no-underline truncate cursor-pointer';
+const rowClass = 'block w-full box-border font-[family-name:var(--font-inter),_sans-serif] py-[8px] pr-[8px] rounded-[4px] border-0 text-left text-[14px] leading-[20px] no-underline truncate cursor-pointer';
 
 function getFolderPaths(nodes: NoteNode[]): string[] {
   return nodes.flatMap((node) => (
@@ -133,7 +133,7 @@ const NoteTree: React.FC<NoteSidebarProps> = ({ nodes, file, collapsed, onCollap
         <div className="flex items-center mb-[8px]">
           {folderPaths.length > 0 && (
             <button
-              className="p-0 border-0 bg-transparent font-['Inter',_sans-serif] tracking-[0.35px] text-[12px] text-[#8b949e] cursor-pointer hover:text-[white]"
+              className="p-0 border-0 bg-transparent font-[family-name:var(--font-inter),_sans-serif] tracking-[0.35px] text-[12px] text-[#8b949e] cursor-pointer hover:text-[white]"
               type="button"
               onClick={() => setOpenPaths(new Set(allOpen ? [] : folderPaths))}
             >
