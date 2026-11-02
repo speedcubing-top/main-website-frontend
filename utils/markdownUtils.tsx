@@ -77,6 +77,44 @@ const CodeBlock: React.FC<React.ComponentProps<'pre'> & ExtraProps> = ({ node, r
   );
 };
 
+// Images are shown smaller than the column, so clicking one opens it full size.
+const NoteImage: React.FC<React.ComponentProps<'img'> & ExtraProps> = ({ node, ref, ...props }) => {
+  const [zoomed, setZoomed] = useState(false);
+
+  useEffect(() => {
+    if (!zoomed) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setZoomed(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [zoomed]);
+
+  return (
+    <>
+      <img
+        {...props}
+        className={styles.image}
+        onClick={(event) => {
+          // A linked image should follow its link instead.
+          if (!event.currentTarget.closest('a')) {
+            setZoomed(true);
+          }
+        }}
+      />
+      {zoomed && (
+        <span className={styles.lightbox} role="dialog" aria-label="Image" onClick={() => setZoomed(false)}>
+          <img src={props.src} alt={props.alt} />
+        </span>
+      )}
+    </>
+  );
+};
+
 interface RenderMarkdownProps {
   content: string;
   file: string;
@@ -160,6 +198,7 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
         <Markdown
           components={{
             pre: CodeBlock,
+            img: NoteImage,
             // Links within the note stay in this tab, everything else opens a new one.
             a: ({ node, ...props }) => (
               props.href?.startsWith('#') ? <a {...props} /> : <a {...props} target="_blank" rel="noreferrer" />
