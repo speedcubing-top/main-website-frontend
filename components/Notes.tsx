@@ -45,13 +45,13 @@ const Notes: React.FC<NotesProps> = ({ content, file, path, title, birth, modifi
   const sidebarLoaded = useRef(false);
   const sidebarWidth = sidebar.collapsed ? 0 : sidebar.width;
   const router = useRouter();
-  const [navigating, setNavigating] = useState(false);
+  const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   const [headings, setHeadings] = useState<NoteHeading[]>([]);
 
   // Notes come from getServerSideProps, so show Loading while the next one is fetched.
   useEffect(() => {
-    const start = (_url: string, { shallow }: { shallow: boolean }) => setNavigating(!shallow);
-    const done = () => setNavigating(false);
+    const start = (url: string, { shallow }: { shallow: boolean }) => setNavigatingTo(shallow ? null : url);
+    const done = () => setNavigatingTo(null);
 
     router.events.on('routeChangeStart', start);
     router.events.on('routeChangeComplete', done);
@@ -108,8 +108,8 @@ const Notes: React.FC<NotesProps> = ({ content, file, path, title, birth, modifi
         </button>
       )}
       <div className={`flex-1 min-w-0 ${tree ? 'col-start-2 box-border px-[24px]' : ''}`}>
-        {navigating ? (
-          <Loading />
+        {navigatingTo ? (
+          <Loading key={navigatingTo} url={navigatingTo} />
         ) : content === undefined ? (
           <NoteList tree={tree ?? []} />
         ) : (
@@ -125,7 +125,7 @@ const Notes: React.FC<NotesProps> = ({ content, file, path, title, birth, modifi
           />
         )}
       </div>
-      {tree && !navigating && content !== undefined && headings.length > 1 && <NoteToc headings={headings} />}
+      {tree && !navigatingTo && content !== undefined && headings.length > 1 && <NoteToc headings={headings} />}
     </div>
   );
 };
