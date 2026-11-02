@@ -1,0 +1,58 @@
+.toc {
+  container-type: inline-size;
+}
+
+.nav {
+  position: sticky;
+  top: 40px;
+  box-sizing: border-box;
+  max-height: calc(100vh - 40px);
+  padding: 50px 16px 24px 0;
+  overflow-y: auto;
+  color-scheme: dark;
+  font-family: Inter, sans-serif;
+  letter-spacing: 0.35px;
+}
+
+/* The column mirrors the sidebar width, so hide the list when it's too narrow to read. */
+@container (max-width: 159px) {
+  .nav {
+    display: none;
+  }
+}
+
+.title {
+  margin-bottom: 8px;
+  color: #8b949e;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-left: 1px solid #30363d;
+}
+
+.link {
+  display: block;
+  margin-left: -1px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-left: 2px solid transparent;
+  color: #8b949e;
+  font-size: 13px;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.link:hover {
+  color: #c9d1d9;
+}
+
+.active {
+  border-left-color: #2f81f7;
+  color: white;
+}

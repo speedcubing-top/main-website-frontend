@@ -1,13 +1,11 @@
-.wrapper {
+/* Scoped to .markdown-body so github-markdown-css can't override it, whatever order the CSS loads in. */
+.wrapper:global(.markdown-body) {
   width: 100%;
   max-width: 720px;
   margin: auto;
   background-color: #101010;
   padding-top: 50px;
   padding-bottom: 100px;
-}
-
-.wrapper:global(.markdown-body) {
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   line-height: 1.75;
   letter-spacing: 0.35px;
@@ -56,4 +54,65 @@
 
 .wrapper :global(.callout > :last-child) {
   margin-bottom: 0;
+}
+
+.codeBlock {
+  position: relative;
+}
+
+.copyButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 8px;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  background-color: #21262d;
+  color: #c9d1d9;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  line-height: 20px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.copyButton:hover {
+  background-color: #30363d;
+}
+
+.codeBlock:hover .copyButton,
+.copyButton:focus-visible {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .copyButton {
+    opacity: 1;
+  }
+}
+
+.wrapper:global(.markdown-body) :global(:is(h1, h2, h3, h4, h5, h6)) {
+  /* Keep headings clear of the sticky site header when jumping to them. */
+  scroll-margin-top: 56px;
+}
+
+.wrapper :global(.heading-anchor) {
+  margin-left: 8px;
+  color: #8b949e;
+  opacity: 0;
+}
+
+.wrapper :global(.heading-anchor::before) {
+  content: "#";
+}
+
+.wrapper :global(.heading-anchor:hover) {
+  color: #c9d1d9;
+  text-decoration: none;
+}
+
+.wrapper :global(:is(h1, h2, h3, h4, h5, h6):hover .heading-anchor),
+.wrapper :global(.heading-anchor:focus-visible) {
+  opacity: 1;
 }

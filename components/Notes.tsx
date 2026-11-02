@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Loading from './Loading';
 import NoteList from './NoteList';
+import NoteToc from './NoteToc';
 import NoteTree from './NoteTree';
 import { NoteNode } from '../utils/NoteServerSideProps';
-import { RenderMarkdown } from '../utils/markdownUtils';
+import { NoteHeading, RenderMarkdown } from '../utils/markdownUtils';
 
 interface NotesProps {
   content?: string;
@@ -45,6 +46,7 @@ const Notes: React.FC<NotesProps> = ({ content, file, path, title, birth, modifi
   const sidebarWidth = sidebar.collapsed ? 0 : sidebar.width;
   const router = useRouter();
   const [navigating, setNavigating] = useState(false);
+  const [headings, setHeadings] = useState<NoteHeading[]>([]);
 
   // Notes come from getServerSideProps, so show Loading while the next one is fetched.
   useEffect(() => {
@@ -119,9 +121,11 @@ const Notes: React.FC<NotesProps> = ({ content, file, path, title, birth, modifi
             birth={birth}
             modified={modified}
             showDates={tree !== undefined}
+            onHeadings={setHeadings}
           />
         )}
       </div>
+      {tree && !navigating && content !== undefined && headings.length > 1 && <NoteToc headings={headings} />}
     </div>
   );
 };
