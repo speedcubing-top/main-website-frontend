@@ -9,23 +9,21 @@ COPY . .
 
 RUN npm run build
 
-# Stage 2: Production image with minimal footprint
+# Stage 2: Only the standalone server, without build tools or dev dependencies
 FROM node:24-alpine
 
 WORKDIR /app
 
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/components ./components
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/pages ./pages
-COPY --from=builder /app/styles ./styles
-COPY --from=builder /app/next-env.d.ts ./
-COPY --from=builder /app/tsconfig.json ./
-COPY --from=builder /app/postcss.config.js ./
-COPY --from=builder /app/tailwind.config.js ./
+ENV NODE_ENV=production
+ENV PORT=3000
+# Docker sets HOSTNAME to the container id, which would make the server listen on that address only.
+ENV HOSTNAME=0.0.0.0
 
-COPY --from=builder /app/package*.json ./
+COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+
+USER node
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
