@@ -6,11 +6,11 @@ import Link from 'next/link';
 import styles from './Layout.module.css';
 import { isNotesUrl, useNavigatingTo } from '../utils/useNavigation';
 
-const FIRST_YEAR = 2025;
+const FIRST_YEAR = 2020;
 
 function getCopyrightYears() {
   const year = new Date().getFullYear();
-  return year > FIRST_YEAR ? `${FIRST_YEAR}–${year}` : `${FIRST_YEAR}`;
+  return year > FIRST_YEAR ? `${FIRST_YEAR}-${year}` : `${FIRST_YEAR}`;
 }
 
 interface LayoutProps {
@@ -98,7 +98,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       <footer className="h-[20px] p-[10px] bg-[#000000] text-[white] font-[family-name:var(--font-jetbrains-mono),_monospace] text-center">
         {/* Static pages keep the year from build time, so a stale year after New Year is expected. */}
-        <span suppressHydrationWarning>© {getCopyrightYears()} speedcubing.top</span>
+        <span suppressHydrationWarning>Copyright © {getCopyrightYears()} speedcubing.top</span>
       </footer>
     </div>
   );
