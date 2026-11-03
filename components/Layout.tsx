@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode } from 'react';
+import React, { useState, useEffect, useRef, ReactNode } from 'react';
 import { useRouter } from 'next/router';
 import Loading from './Loading';
 import MuzakPlayer from "./MuzakPlayer";
@@ -25,6 +25,30 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   // Notes handles note-to-note navigation itself, so its sidebar stays put.
   const notesKeepSidebar = navigatingTo !== null && isNotesUrl(navigatingTo) && router.pathname === '/notes/[[...slug]]';
   const loading = navigatingTo !== null && !notesKeepSidebar;
+
+  const footerRef = useRef<HTMLElement>(null);
+
+  // Sticky sidebars can't overlap the footer, so they would jump up once it scrolls into view.
+  // Exposing how much of it is visible lets them shrink instead.
+  useEffect(() => {
+    const footer = footerRef.current;
+    if (!footer) {
+      return;
+    }
+    const update = () => {
+      const overlap = Math.max(0, window.innerHeight - footer.getBoundingClientRect().top);
+      document.documentElement.style.setProperty('--footer-overlap', `${overlap}px`);
+    };
+    const observer = new ResizeObserver(update);
+    observer.observe(document.body);
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, []);
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -96,7 +120,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {loading ? <Loading key={navigatingTo ?? undefined} url={navigatingTo ?? undefined} /> : children}
       </main>
 
-      <footer className="h-[20px] p-[10px] bg-[#000000] text-[white] font-[family-name:var(--font-jetbrains-mono),_monospace] text-center">
+      <footer ref={footerRef} className="h-[20px] p-[10px] bg-[#000000] text-[white] font-[family-name:var(--font-jetbrains-mono),_monospace] text-center">
         {/* Static pages keep the year from build time, so a stale year after New Year is expected. */}
         <span suppressHydrationWarning>Copyright © {getCopyrightYears()} speedcubing.top</span>
       </footer>

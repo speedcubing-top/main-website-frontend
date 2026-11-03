@@ -129,7 +129,7 @@ const NoteTree: React.FC<NoteSidebarProps> = ({ nodes, file, collapsed, onCollap
 
   return (
     <aside className={`relative min-w-0 box-border [border-right:1px_solid_#2a2a2a] ${collapsed ? 'hidden' : ''}`}>
-      <nav className="sticky top-[40px] max-h-[calc(100vh-40px)] box-border p-[12px] overflow-y-auto [color-scheme:dark]">
+      <nav className="sticky top-[40px] max-h-[calc(100vh-40px-var(--footer-overlap,0px))] box-border p-[12px] overflow-y-auto [color-scheme:dark]">
         <div className="flex items-center mb-[8px]">
           {folderPaths.length > 0 && (
             <button
