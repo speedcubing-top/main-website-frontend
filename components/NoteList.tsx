@@ -35,7 +35,7 @@ const NoteRow: React.FC<{ note: NoteNode; dated: boolean }> = ({ note, dated }) 
   return (
     <div className="flex items-baseline gap-[12px] py-[4px]">
       {dated && <span className="shrink-0 w-[48px] text-[14px] text-[#8b949e] tabular-nums">{note.date?.slice(5, 10)}</span>}
-      <Link className="min-w-0 truncate" href={`/notes${note.slug ? `/${note.slug}` : encodeNotePath(note.path)}`} title={note.name}>
+      <Link className="min-w-0 truncate" href={`/notes${note.slug ? `/${note.slug}` : encodeNotePath(note.path)}`} title={note.name} target="_blank" rel="noopener">
         {note.name}
       </Link>
       <span className="shrink-0 max-w-[40%] truncate text-[13px] text-[#6e7681]">{folder}</span>
