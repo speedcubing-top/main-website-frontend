@@ -61,11 +61,11 @@ const Loading: React.FC<LoadingProps> = ({ url }) => {
       {requests && (
         <div className="mt-[24px] max-w-[90%] text-left text-[13px] leading-[22px] text-[#8b949e] break-all">
           <div>
-            <span className="text-[#c9d1d9]">GET</span> {requests.data}
+            <span className="text-[#79c0ff]">GET</span> {requests.data}
           </div>
           {requests.server.map((path) => (
             <div key={path} className="pl-[16px]">
-              └ server → backend <span className="text-[#c9d1d9]">GET</span> {path}
+              └ server → backend <span className="text-[#79c0ff]">GET</span> {path}
             </div>
           ))}
           <div className="mt-[8px] tabular-nums">{(elapsed / 1000).toFixed(1)}s</div>
