@@ -19,7 +19,7 @@
 .wrapper:global(.markdown-body) .noteTitle {
   margin-top: 0;
   font-family: var(--font-jetbrains-mono), monospace;
-  font-size: 36px;
+  font-size: 32px;
   text-align: center;
 }
 
