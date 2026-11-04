@@ -252,6 +252,10 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
       </Head>
       <div ref={bodyRef} className={`markdown-body ${styles.wrapper}`}>
         {showDates && (
+          // No id, so it stays out of the TOC.
+          <h1 className={styles.noteTitle}>{markdownTitle}</h1>
+        )}
+        {showDates && (
           <div className="mb-[24px] text-[14px] text-[#8b949e]">
             <div>Birth: {markdownBirth ?? 'Unknown'}</div>
             <div>Modify: {mounted && (formatModified(markdownModified) ?? 'Unknown')}</div>
