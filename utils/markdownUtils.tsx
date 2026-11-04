@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Markdown, { ExtraProps, UrlTransform, defaultUrlTransform } from 'react-markdown';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
@@ -15,6 +15,7 @@ import 'github-markdown-css/github-markdown-dark.css';
 
 import { getNoteApiPath, parseNote } from './NoteServerSideProps';
 import remarkCallouts from './remarkCallouts';
+import { readMarkdownStream } from './readMarkdownStream';
 import styles from './markdown.module.css';
 
 const sanitizeSchema = {
@@ -205,6 +206,10 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
   const [markdownModified, setMarkdownModified] = useState<string | null>(modified);
   const [mounted, setMounted] = useState<boolean>(false);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(true);
+  const [streaming, setStreaming] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [retry, setRetry] = useState(0);
 
   // The server doesn't know the viewer's timezone, so Modify is formatted after hydration.
   useEffect(() => {
@@ -219,70 +224,136 @@ export const RenderMarkdown: React.FC<RenderMarkdownProps> = ({ content, file, t
       text: heading.textContent?.trim() ?? '',
       level: Number(heading.tagName[1]),
     })));
-  }, [markdown, onHeadings]);
+  }, [markdown, loading, onHeadings]);
 
   useEffect(() => {
+    const controller = new AbortController();
+    let inFlight = false;
+    let hasContent = false;
+    let lastRaw: string | null = null;
+    let lastEtag: string | null = null;
+    const showNote = (raw: string, path: string) => {
+      const note = parseNote(raw, path);
+      setMarkdownTitle(note.title);
+      setMarkdownBirth(note.birth);
+      setMarkdown(note.content);
+      if (note.content) setLoading(false);
+    };
     const fetchMarkdown = async () => {
+      if (inFlight) return;
+      inFlight = true;
+      setStreaming(!hasContent);
       try {
-        const res = await fetch(getNoteApiPath(file));
-        if (!res.ok) {
+        const streamPath = getNoteApiPath(file).replace('/api/notes', '/api/notestream');
+        let res = await fetch(streamPath, {
+          signal: controller.signal,
+          headers: lastEtag ? { 'If-None-Match': lastEtag } : undefined,
+        });
+        if (res.status === 304) {
+          setLoadError(null);
           return;
         }
-
-        const json = await res.json();
-        const { content, title, birth } = parseNote(json.content, json.path ?? file);
-        setMarkdownTitle(title);
-        setMarkdownBirth(birth);
-        setMarkdownModified(json.modified ?? null);
-        setMarkdown(content);
+        let raw: string;
+        let path = file;
+        let updated: string | null;
+        let etag: string | null = null;
+        if (res.status === 404 || res.status === 405) {
+          // Allow frontend and backend to be deployed in either order.
+          await res.body?.cancel();
+          res = await fetch(getNoteApiPath(file), { signal: controller.signal });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const json = await res.json();
+          raw = json.content;
+          path = json.path ?? file;
+          updated = json.modified ?? null;
+        } else {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          path = decodeURIComponent(res.headers.get('X-Note-Path') ?? file);
+          updated = res.headers.get('X-Note-Modified');
+          etag = res.headers.get('ETag');
+          raw = await readMarkdownStream(res, (preview) => {
+            // Keep the current complete article visible during background updates.
+            if (!hasContent && !controller.signal.aborted) showNote(preview, path);
+          }, controller.signal);
+        }
+        if (controller.signal.aborted) return;
+        if (raw !== lastRaw) showNote(raw, path);
+        lastRaw = raw;
+        lastEtag = etag;
+        hasContent = true;
+        setMarkdownModified(updated);
+        setLoadError(null);
+        setLoading(false);
       } catch (err) {
-        console.error('Fetch error:', err);
+        if (!controller.signal.aborted) {
+          console.error('Fetch error:', err);
+          setLoadError('Unable to load the document. Please try again.');
+        }
+      } finally {
+        inFlight = false;
+        if (!controller.signal.aborted) setStreaming(false);
       }
     };
 
     fetchMarkdown();
-    const intervalId = setInterval(fetchMarkdown, 5000);
-    return () => clearInterval(intervalId);
-  }, [file, markdown]);
+    const intervalId = setInterval(fetchMarkdown, 60_000);
+    return () => {
+      controller.abort();
+      clearInterval(intervalId);
+    };
+  }, [file, retry]);
+
+  const renderedMarkdown = useMemo(() => (
+    <Markdown
+      components={{
+        pre: CodeBlock,
+        img: NoteImage,
+        // Links within the note stay in this tab, everything else opens a new one.
+        a: ({ node, ...props }) => (
+          props.href?.startsWith('#') ? <a {...props} /> : <a {...props} target="_blank" rel="noreferrer" />
+        ),
+      }}
+      remarkPlugins={[remarkGfm, remarkCallouts, remarkBreaks]}
+      rehypePlugins={[
+        rehypeRaw,
+        [rehypeSanitize, sanitizeSchema],
+        rehypeHighlight,
+        // After sanitize, which would prefix the ids with user-content-.
+        rehypeSlug,
+        [rehypeAutolinkHeadings, {
+          behavior: 'prepend',
+          properties: { className: ['heading-anchor'], ariaLabel: 'Link to this section' },
+          content: [],
+        }],
+      ]}
+      urlTransform={urlTransform}
+    >
+      {markdown}
+    </Markdown>
+  ), [markdown]);
 
   return (
     <>
       <Head>
         <title>{markdownTitle}</title>
       </Head>
-      <div ref={bodyRef} className={`markdown-body ${styles.wrapper}`}>
+      <div ref={bodyRef} className={`markdown-body ${styles.wrapper}`} aria-busy={loading || streaming}>
         {showDates && (
           <div className="mb-[24px] text-[14px] text-[#8b949e]">
             <div>Birth: {markdownBirth ?? 'Unknown'}</div>
             <div>Modify: {mounted && (formatModified(markdownModified) ?? 'Unknown')}</div>
           </div>
         )}
-        <Markdown
-          components={{
-            pre: CodeBlock,
-            img: NoteImage,
-            // Links within the note stay in this tab, everything else opens a new one.
-            a: ({ node, ...props }) => (
-              props.href?.startsWith('#') ? <a {...props} /> : <a {...props} target="_blank" rel="noreferrer" />
-            ),
-          }}
-          remarkPlugins={[remarkGfm, remarkCallouts, remarkBreaks]}
-          rehypePlugins={[
-            rehypeRaw,
-            [rehypeSanitize, sanitizeSchema],
-            rehypeHighlight,
-            // After sanitize, which would prefix the ids with user-content-.
-            rehypeSlug,
-            [rehypeAutolinkHeadings, {
-              behavior: 'prepend',
-              properties: { className: ['heading-anchor'], ariaLabel: 'Link to this section' },
-              content: [],
-            }],
-          ]}
-          urlTransform={urlTransform}
-        >
-          {markdown}
-        </Markdown>
+        {!loading && renderedMarkdown}
+        {(loading || streaming || loadError) && (
+          <div role="status" className="py-[48px] text-center text-[#8b949e]">
+            {loadError ?? (loading ? 'Loading document…' : 'Loading more content…')}
+            {loadError && <button type="button" className="ml-[12px] underline" onClick={() => {
+              setLoadError(null);
+              setRetry((value) => value + 1);
+            }}>Retry</button>}
+          </div>
+        )}
       </div>
     </>
   );

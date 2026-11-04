@@ -23,6 +23,19 @@ export const NOTE_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}( \d{2}:\d{2}(:\d{2})?)?$/;
 const SITE_URL = 'https://speedcubing.top';
 const NOTE_LIST_DESCRIPTION = 'Notes from speedcubing.top, newest first.';
 const DESCRIPTION_LENGTH = 155;
+const SERVER_FETCH_TIMEOUT_MS = 2000;
+
+// Bound both headers and body reading so a slow backend cannot hold the page open.
+async function fetchServerJson(url: string) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), SERVER_FETCH_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    return { ok: res.ok, status: res.status, json: res.ok ? await res.json() : null };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 export function encodeNotePath(file: string) {
   return file.split('/').map(encodeURIComponent).join('/');
@@ -110,8 +123,12 @@ export function parseNote(raw: string, file: string) {
 }
 
 async function getNoteTree(): Promise<NoteNode[]> {
-  const res = await fetch('http://main-website-backend:8080/api/notetree');
-  return res.ok ? res.json() : [];
+  try {
+    const res = await fetchServerJson('http://main-website-backend:8080/api/notetree');
+    return res.ok ? res.json : [];
+  } catch {
+    return [];
+  }
 }
 
 export async function getNoteListServerSideProps() {
@@ -125,27 +142,43 @@ export async function getNoteListServerSideProps() {
 }
 
 export async function getNoteServerSideProps(file: string) {
-  const res = await fetch(`http://main-website-backend:8080${getNoteApiPath(file)}`);
+  let res: Awaited<ReturnType<typeof fetchServerJson>>;
+  try {
+    res = await fetchServerJson(`http://main-website-backend:8080${getNoteApiPath(file)}`);
+    if (!res.ok && res.status !== 404) {
+      throw new Error(`Note backend returned ${res.status}`);
+    }
+  } catch {
+    // Return a small page; the browser can keep waiting for the note independently.
+    const title = getNoteTitle(undefined, file);
+    return {
+      props: {
+        content: '', file, path: file, title,
+        seo: { title, canonical: getNoteUrl(file) },
+      },
+    };
+  }
 
   if (!res.ok) {
     return { notFound: true };
   }
 
-  const json = await res.json();
+  const json = res.json;
 
   if (json.slug && file !== `/${json.slug}`) {
     return { redirect: { destination: `/notes/${json.slug}`, statusCode: 301 } };
   }
 
   const path: string = json.path ?? file;
-  const { content, title, birth, description } = parseNote(json.content, path);
+  const { title, birth, description } = parseNote(json.content, path);
   const canonical = getNoteUrl(path, json.slug);
   const isNote = path !== '/mainpage';
   const publishedTime = getNotePublishedTime(birth);
 
   return {
     props: {
-      content,
+      // Every document uses the same progressive browser loading flow.
+      content: '',
 	  file,
 	  path,
 	  title,
