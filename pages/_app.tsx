@@ -22,15 +22,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           crossOrigin="anonymous"
         />
 
-        {/* Mobile search bar color */}
-        <meta name="theme-color" content="black" />
-
         {/* Discord Embed */}
         <meta key="og:site_name" property="og:site_name" content="speedcubing.top" />
         <meta key="og:type" property="og:type" content="website" />
         <meta key="og:title" property="og:title" content="speedcubing.top" />
         <meta key="og:description" property="og:description" content="oh?" />
-        <meta name="theme-color" content="#550000" />
+        <meta name="theme-color" content="#000000" />
         <meta key="og:url" property="og:url" content="https://speedcubing.top" />
         <meta key="og:image" property="og:image" content="https://speedcubing.top/favicon.ico" />
 
